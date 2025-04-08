@@ -18,12 +18,12 @@ function base_url($path = '') {
 }
 
 function base_path($path = '') {
-    return realpath(__DIR__ . '/../' . ltrim($path, '/')) ?: __DIR__ . '/../' . ltrim($path, '/');
+    return realpath(__DIR__ . '/../../' . ltrim($path, '/')) ?: __DIR__ . '/../../' . ltrim($path, '/');
 }
 
+
 function views_path($path = '') {
-    $viewPath = base_path('app/views/' . ltrim($path, '/'));
-    return str_replace('/app/../app', '/app', $viewPath); // Normalize the path
+    return base_path('App/views/' . ltrim($path, '/'));
 }
 
 function redirect($path = '', $queryParams = []) {
@@ -41,21 +41,21 @@ function render($view, $data = [], $layout = 'layout') {
     $viewPath = views_path($view . '.php');
     $layoutPath = views_path($layout . '.php');
 
-    // Debugging: Check if the view file exists
     if (!file_exists($viewPath)) {
         die("View file not found: " . $viewPath);
     }
 
-    // Debugging: Check if the layout file exists
     if (!file_exists($layoutPath)) {
         die("Layout file not found: " . $layoutPath);
     }
 
     ob_start();
-    require_once $viewPath;
+    require $viewPath;
     $content = ob_get_clean();
-    require_once $layoutPath;
+
+    require $layoutPath;
 }
+
 function config($key) {
     $config = require base_path("config/config.php");
     $keys = explode(".", $key);
