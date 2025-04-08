@@ -29,7 +29,7 @@ class Navbar implements RenderableInterface
         // We want to pass $templateData to navbar.php
         ob_start();
         extract($templateData, EXTR_SKIP);
-        include views_path('navbar.php'); // single navbar template
+        include views_path('organisms/navbar.php'); // single navbar template
         return ob_get_clean();
     }
 

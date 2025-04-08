@@ -23,7 +23,7 @@ class Layout implements RenderableInterface
             'title'        => 'My Website',
             'stylesPaths'  => [],  // e.g. ['assets/css/global.css']
             'scriptsPaths' => [],  // e.g. ['assets/js/global.js']
-            'layoutView'   => 'layout', // the single layout file => views/layout.php
+            'layoutView'   => 'layouts/main_layout', // the single layout file => views/layout.php
         ];
 
         $this->config = array_merge($defaults, $config);

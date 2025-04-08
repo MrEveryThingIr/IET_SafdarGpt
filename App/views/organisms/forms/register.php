@@ -168,7 +168,7 @@
         <!-- Login Link -->
         <p class="mt-4 text-center text-gray-600">
             Already have an account? 
-            <a href="<?php route('home.login')?>" class="text-blue-500 hover:underline">Login here</a>.
+            <a href="<?php echo route('home.login')?>" class="text-blue-500 hover:underline">Login here</a>.
         </p>
     </div>
 </div>

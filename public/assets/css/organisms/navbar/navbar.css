@@ -1,0 +1,65 @@
+/* public/assets/css/organisms/navbar/navbar.css */
+
+.o-navbar {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    border-bottom: 1px solid #ccc;
+    padding: 0.5rem 1rem;
+  }
+  
+  .o-navbar__brand {
+    font-weight: bold;
+    margin-right: 2rem;
+  }
+  
+  .o-navbar__list {
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .o-navbar__item {
+    position: relative;
+  }
+  
+  /* If the item has a submenu */
+  /* .o-navbar__item--has-submenu { */
+    /* extra styling if desired */
+  /* } */
+  
+  /* The toggle button for a submenu */
+  .o-navbar__toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font: inherit;
+  }
+  
+  /* The submenu, hidden by default (we toggle .is-hidden) */
+  .o-navbar__submenu {
+    display: block; /* we override with .is-hidden { display: none } */
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    min-width: 150px;
+    margin-top: 0.5rem;
+    list-style: none;
+    padding: 0;
+  }
+  
+  /* A link inside the navbar */
+  .o-navbar__link {
+    color: #333;
+    text-decoration: none;
+    padding: 0.5rem;
+    display: inline-block;
+  }
+  .o-navbar__link:hover {
+    background-color: #eee;
+  }
+  

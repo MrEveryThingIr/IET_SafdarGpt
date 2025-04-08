@@ -27,8 +27,8 @@ class LayoutService
 
         return new Layout($navbar, $sidebar, [
             'title'       => 'Default Page',
-            'stylesPaths' => ['assets/css/layout_default.css'],
-            'scriptsPaths'=> ['assets/js/layout_default.js'],
+            'stylesPaths' => ['assets/css/global/layout.css',],
+            'scriptsPaths'=> ['assets/js/global/utils.js'],
             // 'layoutView' => 'layout' // if you want a non-default layout file
         ]);
     }
@@ -40,12 +40,13 @@ class LayoutService
     {
         $navbar = $this->navbarService->createAdminNavbar();
         $sidebar = $this->sidebarService->createAdminSidebar();
-
+        
         return new Layout($navbar, $sidebar, [
-            'title'       => 'Admin Panel',
-            'stylesPaths' => ['assets/css/layout_admin.css'],
-            'scriptsPaths'=> ['assets/js/layout_admin.js'],
+          'title'       => 'Admin Panel',
+          'stylesPaths' => ['assets/css/global/layout.css',],
+          'scriptsPaths'=> ['assets/js/global/utils.js'],
         ]);
+        
     }
 
     /**

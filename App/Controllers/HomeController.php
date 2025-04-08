@@ -27,7 +27,7 @@ class HomeController
 
         // 2) Render the "home/register" view
         $html = $layout->render([
-            'view'     => 'forms/register',
+            'view'     => 'organisms/forms/register',
             'viewData' => [
                 // pass data for registration if needed
             ]
@@ -43,7 +43,7 @@ class HomeController
         
         // 2) Render the "home/login" view
         $html = $layout->render([
-            'view'     => 'forms/login',
+            'view'     => 'organisms/forms/login',
             'viewData' => []
         ]);
 

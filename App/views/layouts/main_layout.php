@@ -5,7 +5,7 @@
     <title><?php echo htmlspecialchars($title ?? 'My Website'); ?></title>
 
     <!-- Base or default styles -->
-    <link rel="stylesheet" href="<?php echo base_url('assets/css/sidebar.css'); ?>">
+    
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 
 
@@ -37,8 +37,7 @@
     <!-- Base or default scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
-    <script src="<?php echo base_url('assets/javascript/sidebar.js'); ?>"></script>
-
+    
     <!-- Dynamically inserted scripts -->
     <?php if (!empty($scriptsPaths) && is_array($scriptsPaths)): ?>
         <?php foreach ($scriptsPaths as $jsPath): ?>

@@ -16,28 +16,38 @@ class NavbarService
                 'Home'  => route('home'),
                 'Login' => route('home.login'),
             ],
-            'stylesPaths'  => ['assets/css/navbar_default.css'],
-            'scriptsPaths' => ['assets/js/navbar_behavior.js'],
+            'stylesPaths'  => ['assets/css/organisms/navbar/navbar.css'],
+            'scriptsPaths' => ['assets/js/organisms/navbar/navbar.js'],
         ]);
     }
 
-    /**
-     * Create an "admin" navbar
-     */
     public function createAdminNavbar(): Navbar
     {
-        return new Navbar([
-            'brand'        => 'Admin Panel',
-            'items'        => [
-                'Dashboard' => route('admin.dashboard'),
-                'Users'     => route('admin.users'),
-                'Reports'   => route('admin.reports'),
+        $items = [
+            'Home' => route('home'),
+            'Services' => [
+                'SubService1' => "#",
+                'SubService2' => '#',
+                'More' => [
+                    'SubSub1' => '#',
+                    'SubSub2' => "#",
+                ],
             ],
-            'stylesPaths'  => ['assets/css/navbar_admin.css'],
-            'scriptsPaths' => ['assets/js/navbar_admin.js'],
+            'Contact' => "#",
+        ];
+    
+        return new Navbar([
+            'brand' => 'Admin Panel',
+            'items' => $items,
+            'stylesPaths' => [
+                'assets/css/organisms/navbar/navbar.css'
+            ],
+            'scriptsPaths' => [
+                'assets/js/organisms/navbar/navbar.js'
+            ],
         ]);
     }
-
+    
     /**
      * Create a minimal or "mobile" navbar, etc.
      */

@@ -11,23 +11,46 @@ class SidebarService
     public function createDefaultSidebar(): Sidebar
     {
         return new Sidebar([
-            'items'        => ['Dashboard', 'Settings', 'Help'],
-            'stylesPaths'  => ['assets/css/sidebar_default.css'],
-            'scriptsPaths' => [],
+            'items'        => ['Dashboard'=>"#", 'Settings'=>'#', 'Help'=>'#'],
+            'stylesPaths'  => ['assets/css/organisms/sidebar/sidebar.css'],
+            'scriptsPaths' => ['assets/js/organisms/sidebar/sidebar.js'],
         ]);
     }
 
     /**
      * Create an admin sidebar
-     */
-    public function createAdminSidebar(): Sidebar
-    {
-        return new Sidebar([
-            'items'        => ['Admin Home', 'System Logs', 'Server Config'],
-            'stylesPaths'  => ['assets/css/sidebar_admin.css'],
-            'scriptsPaths' => [],
-        ]);
-    }
+     */public function createAdminSidebar(): Sidebar
+{
+    $items = [
+        'Dashboard' => '#',
+        'Categories' => [
+            'Create Category' => '#',
+            'List Categories' => '#',
+            'Advanced' => [
+                'SubCat A' => '#',
+                'SubCat B' => '#',
+            ],
+        ],
+        'Transactions' => [
+            'Create' => '#',
+            'List' => '#',
+        ],
+    ];
+
+    return new Sidebar([
+        'items' => $items,
+        'stylesPaths' => [
+            // Only load the relevant CSS
+            'assets/css/organisms/sidebar/sidebar.css'
+        ],
+        'scriptsPaths' => [
+            // Only load the relevant JS
+            'assets/js/organisms/sidebar/sidebar.js'
+        ],
+    ]);
+}
+
+
 
     /**
      * Create a minimal or mobile sidebar, etc.
