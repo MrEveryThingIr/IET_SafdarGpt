@@ -1,53 +1,35 @@
 <?php
 namespace App\Controllers;
 
-use App\HTMLRenderer\Navbar;
-use App\HTMLRenderer\Sidebar;
-use App\HTMLRenderer\Layout;
+use App\HTMLServices\LayoutService;
 
 class HomeController
 {
+    private LayoutService $layoutService;
+
+    public function __construct()
+    {
+        // In a real app, you might do dependency injection, 
+        // but for simplicity:
+        $this->layoutService = new LayoutService();
+    }
+
     public function index()
     {
-        // If user hits /home, redirect to login route
+        // Just redirect for the root page:
         redirect(route('home.login'));
     }
 
     public function registration()
     {
-        // 1) Create a Navbar with config
-        $navbar = new Navbar([
-            'brand'        => 'My Site',
-            'items'        => [
-                'Home'  => route('home'),
-                'Login' => route('home.login'),
-            ],
-            'stylesPaths'  => ['assets/css/navbar_custom.css'],
-            'scriptsPaths' => ['assets/js/navbar_behavior.js']
-        ]);
+        // 1) Grab a "default" layout from the LayoutService
+        $layout = $this->layoutService->createDefaultLayout();
 
-        // 2) Create a Sidebar with config
-        $sidebar = new Sidebar([
-            'items'        => ['Dashboard', 'Settings', 'Help'],
-            'stylesPaths'  => ['assets/css/sidebar_custom.css'],
-            'scriptsPaths' => []
-        ]);
-
-        // 3) Create a Layout
-        //    We can pass its own styles/scripts, plus a title, etc.
-        $layout = new Layout($navbar, $sidebar, [
-            'title'       => 'Registration Page',
-            'stylesPaths' => ['assets/css/layout_overrides.css'],
-            'scriptsPaths'=> ['assets/js/layout_interactions.js'],
-            // 'layoutView' => 'layout', // default if we want "views/layout.php"
-        ]);
-
-        // 4) Render the "home/register" view as main content
+        // 2) Render the "home/register" view
         $html = $layout->render([
-            'view'     => 'forms/register', // => "views/home/register.php"
+            'view'     => 'forms/register',
             'viewData' => [
-                // any data needed in the register form
-                // e.g. 'roles' => ['admin', 'user', 'editor'],
+                // pass data for registration if needed
             ]
         ]);
 
@@ -56,24 +38,12 @@ class HomeController
 
     public function login()
     {
-        // You could similarly create a different or simpler navbar
-        $navbar = new Navbar([
-            'brand'        => 'My Site',
-            'items'        => [
-                'Home' => route('home')
-            ],
-        ]);
-
-        // Maybe no sidebar for login
-        $sidebar = null;
-
-        // Layout with minimal styles
-        $layout = new Layout($navbar, $sidebar, [
-            'title'       => 'Login Page'
-        ]);
-
+        // 1) Also use the default layout (or create a minimal or mobile layout if you prefer)
+        $layout = $this->layoutService->createAdminLayout();
+        
+        // 2) Render the "home/login" view
         $html = $layout->render([
-            'view' => 'forms/login',
+            'view'     => 'forms/login',
             'viewData' => []
         ]);
 
