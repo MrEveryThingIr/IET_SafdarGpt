@@ -2,37 +2,36 @@
 // App/views/organisms/sidebar.php
 
 /**
- * Renders a nested sidebar from the $items array.
- * We'll adopt a BEM-like naming: .o-sidebar for "organism-sidebar", 
- * .o-sidebar__item, .o-sidebar__submenu, etc.
- * Also use .js- prefixed classes for JS hooks (toggle, submenu).
+ * Renders a nested sidebar from $items.
+ * We'll combine BEM naming ("o-sidebar__") with Tailwind classes for layout & styling.
+ * Also use .js- classes for JS hooks.
  */
-
-// Recursive function to render nested items
-function renderSidebarItems(array $items, int $level = 0) {
+function renderSidebarItems(array $items) {
     foreach ($items as $label => $value) {
         if (is_string($value)) {
-            // It's a link
+            // Single link
             echo '<li class="o-sidebar__item">';
-            echo '<a href="' . htmlspecialchars($value) . '" class="o-sidebar__link">';
+            echo '<a href="' . htmlspecialchars($value) . '" class="o-sidebar__link block px-3 py-2 hover:bg-gray-700 rounded transition">';
             echo htmlspecialchars($label);
             echo '</a>';
             echo '</li>';
         } elseif (is_array($value)) {
-            // It's a nested submenu
+            // Nested submenu
             echo '<li class="o-sidebar__item o-sidebar__item--has-submenu">';
-            
-            // Toggle button:
-            // We'll place a .js-sidebar-toggle class for JS to attach 
-            echo '<button class="o-sidebar__toggle js-sidebar-toggle">';
-            echo htmlspecialchars($label);
+            echo '<button class="o-sidebar__toggle js-sidebar-toggle w-full text-left px-3 py-2 rounded hover:bg-gray-700 inline-flex items-center justify-between transition">';
+            echo '<span>' . htmlspecialchars($label) . '</span>';
+            // Down arrow icon
+            echo '<svg class="w-4 h-4 ml-2 transition-transform transform" fill="currentColor" viewBox="0 0 20 20">';
+            echo '<path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06 0L10 10.94l3.71-3.72'
+               . 'a.75.75 0 111.06 1.06l-4.24 4.25a.75.75 0 01-1.06 0'
+               . 'L5.23 8.27a.75.75 0 010-1.06z" clip-rule="evenodd" />';
+            echo '</svg>';
             echo '</button>';
 
-            // Submenu
-            // .is-hidden or .o-sidebar__submenu--hidden can hide it by default
-            echo '<ul class="o-sidebar__submenu js-sidebar-submenu is-hidden">';
-            // Recursively call ourselves
-            renderSidebarItems($value, $level + 1);
+            // The submenu (hidden by default)
+            echo '<ul class="o-sidebar__submenu js-sidebar-submenu ml-4 border-l border-gray-600 pl-2 hidden">';
+            // Recursively render nested items
+            renderSidebarItems($value);
             echo '</ul>';
 
             echo '</li>';
@@ -41,14 +40,16 @@ function renderSidebarItems(array $items, int $level = 0) {
 }
 ?>
 
-<aside class="o-sidebar js-sidebar">
-    <ul class="o-sidebar__list">
-        <?php
-        if (!empty($items) && is_array($items)) {
-            renderSidebarItems($items);
-        } else {
-            echo '<li class="o-sidebar__item">No sidebar items.</li>';
-        }
-        ?>
-    </ul>
+<aside class="o-sidebar js-sidebar bg-gray-800 text-white h-full w-64 hidden md:flex flex-col">
+    <div class="o-sidebar__inner flex-1 p-3 overflow-y-auto">
+        <ul class="o-sidebar__list space-y-1">
+            <?php
+            if (!empty($items) && is_array($items)) {
+                renderSidebarItems($items);
+            } else {
+                echo '<li class="o-sidebar__item px-3 py-2">No sidebar items</li>';
+            }
+            ?>
+        </ul>
+    </div>
 </aside>

@@ -40,7 +40,7 @@
   
   /* The submenu, hidden by default (we toggle .is-hidden) */
   .o-navbar__submenu {
-    display: block; /* we override with .is-hidden { display: none } */
+    /* display: block; we override with .is-hidden { display: none } */
     position: absolute;
     top: 100%;
     left: 0;
@@ -61,5 +61,19 @@
   }
   .o-navbar__link:hover {
     background-color: #eee;
+  }
+  
+  /* public/assets/css/organisms/navbar/navbar.css */
+
+/* If using pure Tailwind, you might not need much here. 
+   Just keep BEM naming if you want to add advanced overrides or states. */
+
+/* Example arrow rotation on open state: 
+   We'll toggle a class (like .is-open) in JS if we want. */
+.o-navbar__item--submenu-open .o-navbar__toggle svg {
+    transform: rotate(180deg);
+  }
+  .rotate-180 {
+    transform: rotate(180deg);
   }
   
