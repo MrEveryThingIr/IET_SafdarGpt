@@ -11,33 +11,64 @@ class Validation
 
     public function __construct()
     {
-        $this->db = (new Database())->getConnection();
+        $this->db = Database::getInstance()->getConnection();
     }
 
     public function validate(array $data, array $rules): bool
-    {
-        foreach ($rules as $field => $ruleSet) {
-            $value = $data[$field] ?? null;
+{
+    foreach ($rules as $field => $ruleSet) {
+        $value = $data[$field] ?? null;
+        $rulesArray = explode('|', $ruleSet);
 
-            foreach (explode('|', $ruleSet) as $rule) {
-                $params = [];
-
-                if (str_contains($rule, ':')) {
-                    [$rule, $paramStr] = explode(':', $rule);
-                    $params = explode(',', $paramStr);
-                }
-
-                $method = 'validate' . ucfirst($rule);
-                if (method_exists($this, $method)) {
-                    $this->$method($field, $value, $params);
-                } else {
-                    throw new \Exception("Validation rule {$rule} not implemented.");
-                }
-            }
+        $isOptional = in_array('optional', $rulesArray);
+        if ($isOptional && ($value === null || trim($value) === '')) {
+            continue; // Skip validation for empty optional fields
         }
 
-        return empty($this->errors);
+        foreach ($rulesArray as $rule) {
+            $params = [];
+
+            if (str_contains($rule, ':')) {
+                [$rule, $paramStr] = explode(':', $rule);
+                $params = explode(',', $paramStr);
+            }
+
+            if ($rule === 'optional') {
+                continue; // Skip — handled above
+            }
+
+            $method = 'validate' . ucfirst($rule);
+            if (method_exists($this, $method)) {
+                $this->$method($field, $value, $params);
+            } else {
+                throw new \Exception("Validation rule {$rule} not implemented.");
+            }
+        }
     }
+
+    return empty($this->errors);
+}
+
+protected function validateIn(string $field, $value, array $params): void
+{
+    if (!in_array($value, $params)) {
+        $allowed = implode(', ', $params);
+        $this->addError($field, "The {$field} must be one of the following: {$allowed}.");
+    }
+}
+
+protected function validateDate(string $field, $value, array $params = []): void
+{
+    $format = $params[0] ?? 'Y-m-d'; // Default format is ISO style
+    $d = \DateTime::createFromFormat($format, $value);
+
+    if (!($d && $d->format($format) === $value)) {
+        $this->addError($field, "The {$field} must be a valid date in format {$format}.");
+    }
+}
+
+
+
 
     public function errors(): array
     {

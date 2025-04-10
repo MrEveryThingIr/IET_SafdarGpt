@@ -51,16 +51,10 @@ function render($view, $data = [], $layout = 'layout') {
     require $layoutPath;
 }
 
-function config($key) {
-    $config = require base_path("config/config.php");
-    foreach (explode(".", $key) as $k) {
-        if (!isset($config[$k])) {
-            throw new Exception("Config key '{$k}' not found.");
-        }
-        $config = $config[$k];
-    }
-    return $config;
+function config($key, $default = null) {
+    return \App\Core\Env::get($key, $default);
 }
+
 
 function sanitize($value) {
     return Sanitizer::sanitizeHtmlEntities($value);
@@ -85,3 +79,39 @@ function handleFileUpload($upload_category, $input_name, $allowed_types = [], $m
 function route($name, $params = []) {
     return Route::route($name, $params);
 }
+
+function flash(string $key): ?string {
+    if (!isset($_SESSION[$key])) return null;
+
+    $value = $_SESSION[$key];
+    unset($_SESSION[$key]);
+    return $value;
+}
+
+function inputField(string $name, string $label, string $type = 'text', array $attrs = []): string
+{
+    $errors = $_SESSION['errors'][$name][0] ?? null;
+    $value = $_POST[$name] ?? '';
+    $html = '<div>';
+    $html .= "<label for=\"{$name}\" class=\"block text-gray-700 font-medium\">{$label}</label>";
+    $html .= "<input 
+        type=\"{$type}\" 
+        name=\"{$name}\" 
+        id=\"{$name}\" 
+        value=\"" . htmlspecialchars($value) . "\" 
+        class=\"mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-300\"";
+
+    foreach ($attrs as $attr => $val) {
+        $html .= " {$attr}=\"{$val}\"";
+    }
+
+    $html .= '>';
+
+    if ($errors) {
+        $html .= "<p class=\"text-red-500 text-sm mt-1\">{$errors}</p>";
+    }
+
+    $html .= '</div>';
+    return $html;
+}
+
