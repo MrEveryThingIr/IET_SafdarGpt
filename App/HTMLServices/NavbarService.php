@@ -2,42 +2,48 @@
 namespace App\HTMLServices;
 
 use App\HTMLRenderer\Navbar;
-
+use App\Models\User;
 class NavbarService
 {
+    private $userModel;
+    public function __construct() {
+        $this->userModel=new User();
+    }
     /**
      * Create a "default" navbar
      */
-    public function createDefaultNavbar(): Navbar
-    {
-        return new Navbar([
-            'brand'        => 'MyApp',
-            'items'        => [
-                'Home'  => route('home'),
-                'Login' => route('home.login'),
-            ],
-            'stylesPaths'  => ['assets/css/organisms/navbar/navbar.css'],
-            'scriptsPaths' => ['assets/js/organisms/navbar/navbar.js'],
-        ]);
-    }
-
-    public function createAdminNavbar(): Navbar
+    public function createPublicNavbar(): Navbar
     {
         $items = [
-            'Home' => route('home'),
-            'Services' => [
-                'SubService1' => "#",
-                'SubService2' => '#',
-                'More' => [
-                    'SubSub1' => '#',
-                    'SubSub2' => "#",
-                ],
-            ],
-            'Contact' => "#",
+            'ورود'    => route('home.login'),
+            'ثبت‌نام' => route('home.register'),
         ];
     
         return new Navbar([
-            'brand' => 'Admin Panel',
+            'brand' => 'IET Platform',
+            'items' => $items,
+            'stylesPaths' => ['assets/css/organisms/navbar/navbar.css'],
+            'scriptsPaths' => ['assets/js/organisms/navbar/navbar.js'],
+        ]);
+    }
+    
+
+
+
+    public function createAdminNavbar(): Navbar
+    {
+        if(isset($_SESSION['user_id'])){
+            $user=$this->userModel->fetchUserById();
+        };
+        $items =[
+            'خانه'    => route('dashboard.index'),
+            'پروفایل' => route('user.profile'),
+            'خروج'    => '__LOGOUT_FORM__', // <--- triggers form rendering
+        ];
+        
+    
+        return new Navbar([
+            'brand' => 'IET Platform',
             'items' => $items,
             'stylesPaths' => [
                 'assets/css/organisms/navbar/navbar.css'
@@ -47,6 +53,7 @@ class NavbarService
             ],
         ]);
     }
+    
     
     /**
      * Create a minimal or "mobile" navbar, etc.

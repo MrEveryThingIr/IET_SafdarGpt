@@ -23,7 +23,7 @@ class HomeController
     public function registration()
     {
         // 1) Grab a "default" layout from the LayoutService
-        $layout = $this->layoutService->createDefaultLayout();
+        $layout = $this->layoutService->createPublicLayout();
 
         // 2) Render the "home/register" view
         $html = $layout->render([
@@ -39,7 +39,7 @@ class HomeController
     public function login()
     {
         // 1) Also use the default layout (or create a minimal or mobile layout if you prefer)
-        $layout = $this->layoutService->createAdminLayout();
+        $layout = $this->layoutService->createPublicLayout();
         
         // 2) Render the "home/login" view
         $html = $layout->render([

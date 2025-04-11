@@ -1,10 +1,19 @@
 <?php
 // App/views/organisms/navbar.php
 
-function renderNavbarItems(array $items) {
+function renderNavbarItems(array $items)
+{
     foreach ($items as $label => $value) {
-        if (is_string($value)) {
-            echo '<li class="o-navbar__item relative ">';
+        if ($value === '__LOGOUT_FORM__') {
+            echo '<li class="o-navbar__item">';
+            echo '<form action="' . route('user.logout') . '" method="POST">';
+            echo '<button type="submit" class="o-navbar__link px-3 py-2 text-red-600 hover:bg-red-100 rounded transition block">';
+            echo htmlspecialchars($label);
+            echo '</button>';
+            echo '</form>';
+            echo '</li>';
+        } elseif (is_string($value)) {
+            echo '<li class="o-navbar__item relative">';
             echo '<a href="' . htmlspecialchars($value) . '" class="o-navbar__link px-3 py-2 hover:bg-gray-100 rounded transition block">';
             echo htmlspecialchars($label);
             echo '</a>';
@@ -25,11 +34,11 @@ function renderNavbarItems(array $items) {
             echo '<ul class="o-navbar__submenu js-navbar-submenu absolute bg-white shadow-md border border-gray-200 rounded mt-1 w-40 hidden">';
             renderNavbarItems($value);
             echo '</ul>';
-
             echo '</li>';
         }
     }
 }
+
 ?>
 
 <nav class="o-navbar js-navbar w-full bg-white border-b border-gray-200 px-4">

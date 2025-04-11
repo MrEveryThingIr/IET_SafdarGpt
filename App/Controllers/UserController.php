@@ -35,7 +35,8 @@ class UserController extends BaseController
         $result = $service->authenticate($_POST);
 
         if ($result['success']) {
-            $this->redirect(route('dashboard')); // or wherever your app lands
+            
+            $this->redirect(route('dashboard.index')); // or wherever your app lands
         }
 
         $_SESSION['errors'] = $result['errors'];

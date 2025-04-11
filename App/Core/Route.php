@@ -112,19 +112,25 @@ public static function dispatch() {
         return false;
     }
 
-    protected static function callAction($controller, $action, $params = []) {
+    protected static function callAction($controller, $action, $params = [])
+    {
+        // Normalize any slash-style input like "AuthenticatedControllers/DashboardController"
+        $controller = str_replace('/', '\\', $controller);
+    
+        // Prepend the root controller namespace
         $fullController = "App\\Controllers\\{$controller}";
-
+    
         if (!class_exists($fullController)) {
-            throw new Exception("Controller class not found: $fullController");
+            throw new Exception("Controller class not found: {$fullController}");
         }
-
+    
         $controllerInstance = new $fullController();
-
+    
         if (!method_exists($controllerInstance, $action)) {
-            throw new Exception("Action not found: $controller@$action");
+            throw new Exception("Action not found: {$controller}@{$action}");
         }
-
+    
         call_user_func_array([$controllerInstance, $action], $params);
     }
+    
 }

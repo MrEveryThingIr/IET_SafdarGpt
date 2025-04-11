@@ -46,6 +46,8 @@ class UserServices
         // File upload
         if (!empty($_FILES['img']['name'])) {
             $uploadedFile = UploadService::uploadFile('users', 'img', ['image/jpeg', 'image/png', 'image/gif'], 2 * 1024 * 1024);
+            $user->img = 'users/' . $uploadedFile;
+
             if ($uploadedFile === false) {
                 return ['success' => false, 'errors' => ['img' => ['Failed to upload profile image.']]];
             }
@@ -72,6 +74,7 @@ class UserServices
         }
     
         $user = new User();
+        $user->fill((array) $user);
         $user->email = $input['usernameOrEmail']; // Used for both email or username lookup
         $user->password = $input['password'];
     
@@ -82,4 +85,19 @@ class UserServices
     
         return ['success' => false, 'errors' => ['auth' => ['Invalid credentials.']]];
     }
+
+    public function fetchUserById(int $id): ?User
+    {
+        $user = new User();
+        $user->id = $id;
+    
+        $data = $user->fetchUserById(); // likely returns stdClass or array
+    
+        if (!$data) return null;
+    
+        $user->fill((array) $data); // fill the User instance with DB values
+        return $user;
+    }
+    
+
 }    

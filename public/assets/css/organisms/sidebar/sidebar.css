@@ -60,4 +60,11 @@
   .o-sidebar__link:hover {
     background-color: #444;
   }
+  .profile-block {
+    background-color: #f9fafb;
+}
+.profile-block img {
+    border: 2px solid #e5e7eb;
+}
+
   

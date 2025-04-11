@@ -2,9 +2,14 @@
 namespace App\HTMLServices;
 
 use App\HTMLRenderer\Sidebar;
+use App\Models\User;
 
 class SidebarService
 {
+    private $userModel;
+    public function __construct() {
+        $this->userModel=new User();
+    }
     /**
      * Create a default sidebar
      */
@@ -19,37 +24,45 @@ class SidebarService
 
     /**
      * Create an admin sidebar
-     */public function createAdminSidebar(): Sidebar
-{
-    $items = [
-        'Dashboard' => '#',
-        'Categories' => [
-            'Create Category' => '#',
-            'List Categories' => '#',
-            'Advanced' => [
-                'SubCat A' => '#',
-                'SubCat B' => '#',
+     */
+
+
+    public function createAdminSidebar(): Sidebar
+    {
+        $this->userModel->id=$_SESSION['user_id'];
+        $user=$this->userModel->fetchUserById();
+      
+        
+        $items = [
+            [
+                'type' => 'profile',
+                'image' => uploads_url($user->img ?? 'default.png'),
+                'name' => "{$user->firstname} {$user->lastname}",
+                'balance' => '۰ تومان', // Later replace with dynamic balance
+                'style' => 'profile-header', // custom styling class
             ],
-        ],
-        'Transactions' => [
-            'Create' => '#',
-            'List' => '#',
-        ],
-    ];
-
-    return new Sidebar([
-        'items' => $items,
-        'stylesPaths' => [
-            // Only load the relevant CSS
-            'assets/css/organisms/sidebar/sidebar.css'
-        ],
-        'scriptsPaths' => [
-            // Only load the relevant JS
-            'assets/js/organisms/sidebar/sidebar.js'
-        ],
-    ]);
-}
-
+            'تراکنش ها' => '#',
+            'برنامه ریزی و کنترل زمان' =>route('planner.calendar'),
+            'ایجاد برنامه جدید' => [
+                'برنامه سفر' =>'#',
+                'برنامه مهمانی، جشن، مراسم' => '#',
+                'دعوت به مشارکت، همکاری و استخدام' =>'#',
+            ],
+            'ثبت اطلاعات شخصی من' => '#',
+        ];
+    
+        return new Sidebar([
+            'items' => $items,
+            'stylesPaths' => [
+                'assets/css/organisms/sidebar/sidebar.css',
+               
+            ],
+            'scriptsPaths' => [
+                'assets/js/organisms/sidebar/sidebar.js'
+            ],
+        ]);
+    }
+    
 
 
     /**

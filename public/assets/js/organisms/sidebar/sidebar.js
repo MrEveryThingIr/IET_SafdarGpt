@@ -1,23 +1,24 @@
-// public/assets/js/organisms/sidebar/sidebar.js
-
 document.addEventListener('DOMContentLoaded', () => {
   const toggles = document.querySelectorAll('.js-sidebar-toggle');
 
   toggles.forEach(toggle => {
     toggle.addEventListener('click', () => {
-      // The item with .o-sidebar__item--has-submenu
-      const item = toggle.closest('.o-sidebar__item--has-submenu');
-      const submenu = item.querySelector('.js-sidebar-submenu');
+      const currentItem = toggle.closest('.o-sidebar__item--has-submenu');
+      const currentSubmenu = currentItem.querySelector('.js-sidebar-submenu');
+      const currentIcon = toggle.querySelector('svg');
 
-      // Toggle hidden class
-      submenu.classList.toggle('hidden');
+      // Close other open submenus
+      document.querySelectorAll('.js-sidebar-submenu').forEach(menu => {
+        if (menu !== currentSubmenu) menu.classList.add('hidden');
+      });
 
-      // Optional: rotate arrow icon if desired
-      // We can toggle a class on the item or the svg
-      const svg = toggle.querySelector('svg');
-      if (svg) {
-        svg.classList.toggle('rotate-180');
-      }
+      document.querySelectorAll('.js-sidebar-toggle svg').forEach(icon => {
+        if (icon !== currentIcon) icon.classList.remove('rotate-180');
+      });
+
+      // Toggle current submenu and icon
+      currentSubmenu.classList.toggle('hidden');
+      currentIcon.classList.toggle('rotate-180');
     });
   });
 });

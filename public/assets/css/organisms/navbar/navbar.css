@@ -77,3 +77,11 @@
     transform: rotate(180deg);
   }
   
+  .o-navbar__item form {
+    display: inline;
+}
+
+.o-navbar__item button {
+    all: unset;
+    cursor: pointer;
+}

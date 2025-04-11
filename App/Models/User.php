@@ -104,7 +104,7 @@ class User {
         $dbUser = $stmt->fetch(PDO::FETCH_OBJ);
 
         if ($dbUser && password_verify($this->password, $dbUser->password)) {
-            $this->mapUserData($dbUser);
+            $this->fill($dbUser);
             return true;
         }
         return false;
@@ -133,9 +133,14 @@ class User {
      *
      * @param object $dbUser The user data from the database.
      */
-    private function mapUserData($dbUser) {
-        foreach ($dbUser as $key => $value) {
-            $this->$key = $value;
+    public function fill(array|object $data): void
+    {
+        foreach ((array) $data as $key => $value) {
+            if (property_exists($this, $key)) {
+                $this->$key = $value;
+            }
         }
     }
+    
+    
 }

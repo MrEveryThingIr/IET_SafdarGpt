@@ -19,19 +19,27 @@ class LayoutService
 
     /**
      * Create a default layout (default navbar & sidebar).
-     */
-    public function createDefaultLayout(): Layout
-    {
-        $navbar = $this->navbarService->createDefaultNavbar();
-        $sidebar = $this->sidebarService->createDefaultSidebar();
+     */public function createPublicLayout(): Layout
+{
+    $navbar = $this->navbarService->createPublicNavbar(); // simplified public navbar
+    $sidebar = null; // no sidebar on public layout
 
-        return new Layout($navbar, $sidebar, [
-            'title'       => 'Default Page',
-            'stylesPaths' => ['assets/css/global/layout.css',],
-            'scriptsPaths'=> ['assets/js/global/utils.js'],
-            // 'layoutView' => 'layout' // if you want a non-default layout file
-        ]);
-    }
+    return new Layout($navbar, $sidebar, [
+        'title'       => 'Welcome',
+        'stylesPaths' => [
+            'assets/css/global/layout.css',
+            
+            'assets/css/organisms/navbar/navbar.css',
+        ],
+        'scriptsPaths'=> [
+            'assets/js/global/utils.js',
+            'assets/js/organisms/navbar/navbar.js',
+            
+        ],
+        // optionally: 'layoutView' => 'layouts/public'
+    ]);
+}
+
 
     /**
      * Create an admin layout.
@@ -44,7 +52,9 @@ class LayoutService
         return new Layout($navbar, $sidebar, [
           'title'       => 'Admin Panel',
           'stylesPaths' => ['assets/css/global/layout.css',],
-          'scriptsPaths'=> ['assets/js/global/utils.js'],
+          'scriptsPaths'=> ['assets/js/global/utils.js',
+          'assets/js/organisms/profile.js',
+          'assets/js/organisms/safdar_calendar.js',],
         ]);
         
     }
