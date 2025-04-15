@@ -7,7 +7,7 @@ class   ProfileController extends AuthenticatedController
 {
     public function profile() {
         $layout=new LayoutService();
-        $layout=$layout->createAdminLayout();
+        $layout=$layout->createDeveloperLayout();
         $html = $layout->render([
             'view'     => 'organisms/authenticated/profile',
             'viewData' => ['user'=>(array)$this->currentUser]

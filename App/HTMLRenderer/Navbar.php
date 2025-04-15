@@ -13,7 +13,7 @@ class Navbar implements RenderableInterface
         // Default config if you want fallback values:
         $defaults = [
             'brand'        => 'MyApp',
-            'items'        => [],            // e.g. ['Home' => '/home', 'About' => '/about']
+            'items'        => ["attributes"=>[""]],            // e.g. ['Home' => '/home', 'About' => '/about']
             'stylesPaths'  => [],            // e.g. ['assets/css/navbar.css']
             'scriptsPaths' => [],            // e.g. ['assets/js/navbar.js']
         ];

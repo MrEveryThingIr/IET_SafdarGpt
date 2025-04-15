@@ -1,24 +1,31 @@
 <?php
+
 namespace App\HTMLServices;
 
 use App\HTMLRenderer\Navbar;
 use App\Models\User;
+
 class NavbarService
 {
-    private $userModel;
-    public function __construct() {
-        $this->userModel=new User();
+    private User $userModel;
+
+    public function __construct()
+    {
+        $this->userModel = new User();
     }
-    /**
-     * Create a "default" navbar
-     */
+    public function listAvailable(): array
+{
+    return list_json_components('navbars');
+}
+
+
     public function createPublicNavbar(): Navbar
     {
         $items = [
             'ورود'    => route('home.login'),
             'ثبت‌نام' => route('home.register'),
         ];
-    
+
         return new Navbar([
             'brand' => 'IET Platform',
             'items' => $items,
@@ -26,45 +33,61 @@ class NavbarService
             'scriptsPaths' => ['assets/js/organisms/navbar/navbar.js'],
         ]);
     }
-    
-
-
 
     public function createAdminNavbar(): Navbar
     {
-        if(isset($_SESSION['user_id'])){
-            $user=$this->userModel->fetchUserById();
-        };
-        $items =[
+        $user = $this->getAuthenticatedUser();
+
+        $items = [
             'خانه'    => route('dashboard.index'),
             'پروفایل' => route('user.profile'),
-            'خروج'    => '__LOGOUT_FORM__', // <--- triggers form rendering
+            'خروج'    => '__LOGOUT_FORM__',
         ];
-        
-    
+
         return new Navbar([
-            'brand' => 'IET Platform',
+            'brand' => 'IET Admin Panel',
             'items' => $items,
-            'stylesPaths' => [
-                'assets/css/organisms/navbar/navbar.css'
-            ],
-            'scriptsPaths' => [
-                'assets/js/organisms/navbar/navbar.js'
-            ],
+            'stylesPaths' => ['assets/css/organisms/navbar/navbar.css'],
+            'scriptsPaths' => ['assets/js/organisms/navbar/navbar.js'],
         ]);
     }
-    
-    
-    /**
-     * Create a minimal or "mobile" navbar, etc.
-     */
-    public function createMobileNavbar(): Navbar
+
+    public function createDeveloperNavbar(): Navbar
     {
+        $items = [
+            'Navbar' => [
+                'Layout' => '#',
+                'Items' => '#',
+                'Styles' => '#',
+                'Scripts' => '#',
+            ],
+            'Sidebar' => [
+                'Layout' => '#',
+                'Items' => '#',
+                'Styles' => '#',
+                'Scripts' => '#',
+            ],
+            'Form' => [
+                'Layout' => '#',
+                'Items' => '#',
+                'Styles' => '#',
+                'Scripts' => '#',
+            ],
+            'Preview' => '#'
+        ];
+
         return new Navbar([
-            'brand'        => 'Mobile UI',
-            'items'        => [],
-            'stylesPaths'  => ['assets/css/navbar_mobile.css'],
-            'scriptsPaths' => [],
+            'brand' => 'IET DeveloperInterface',
+            'items' => $items,
+            'stylesPaths' => ['assets/css/organisms/navbar/navbar.css'],
+            'scriptsPaths' => ['assets/js/organisms/navbar/navbar.js'],
         ]);
+    }
+
+    private function getAuthenticatedUser()
+    {
+        if (!isset($_SESSION['user_id'])) return null;
+        $this->userModel->id = $_SESSION['user_id'];
+        return $this->userModel->fetchUserById();
     }
 }

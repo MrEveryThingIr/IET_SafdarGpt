@@ -18,7 +18,10 @@ Route::get('dashboard',"AuthenticatedControllers/DashboardController@index")
 Route::get('/profile','AuthenticatedControllers/ProfileController@profile')
 ->name('user.profile');
 
-Route::get('/planner/calendar','AuthenticatedControllers/PlannerController@renderCalendar')
-->name('planner.calendar');
 
 Route::get('profile/edit',"ProfileController@edit")->name('profile.edit');
+
+
+Route::get('gui/layout/create', 'DeveloperInterfaceControllers\\LayoutBuilderController@create')->name('gui.layout.create');
+Route::post('gui/layout/store', 'DeveloperInterfaceControllers\\LayoutBuilderController@store')->name('gui.layout.store');
+Route::get('gui/layout/preview', 'DeveloperInterfaceControllers\\LayoutBuilderController@preview')->name('gui.layout.preview');
