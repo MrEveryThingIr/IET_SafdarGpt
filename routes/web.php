@@ -45,3 +45,6 @@ Route::get('gui/form/script', 'DeveloperInterfaceControllers\\FormController@scr
 
 // ─── Preview Page ─────────────────────────────────────────────────────────────
 Route::get('gui/preview', 'DeveloperInterfaceControllers\\PreviewController@index')->name('gui.preview');
+
+Route::post('gui/json/save', 'DeveloperInterfaceControllers\\JsonAssetController@save')->name('gui.json.save');
+Route::get('gui/json/fetch', 'DeveloperInterfaceControllers\\JsonAssetController@fetch')->name('gui.json.fetch');

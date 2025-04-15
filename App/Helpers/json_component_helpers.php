@@ -19,3 +19,10 @@ function list_json_components(string $folder): array
 
     return $list;
 }
+
+function ensure_dir($dir)
+{
+    if (!is_dir($dir)) {
+        mkdir($dir, 0755, true);
+    }
+}
