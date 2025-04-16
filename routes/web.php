@@ -48,3 +48,7 @@ Route::get('gui/preview', 'DeveloperInterfaceControllers\\PreviewController@inde
 
 Route::post('gui/json/save', 'DeveloperInterfaceControllers\\JsonAssetController@save')->name('gui.json.save');
 Route::get('gui/json/fetch', 'DeveloperInterfaceControllers\\JsonAssetController@fetch')->name('gui.json.fetch');
+
+
+// roadmap to launching
+Route::get('gui/roadmap', 'RoadMapController@roadmap')->name('gui.roadmap');

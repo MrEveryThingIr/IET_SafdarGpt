@@ -1,5 +1,8 @@
 <div class="max-w-3xl mx-auto mt-10 bg-white p-6 shadow-md rounded-lg">
     <h2 class="text-xl font-bold mb-4">Create Layout Configuration</h2>
+<h4 class=" bg-blue-600"><?php echo $example_of_data ?></h4>
+
+<h4 class=" bg-yellow-600"><?php echo '<pre>'; print_r( $the_list_of_existing_layouts); echo '</pre>' ?></h4>
 
     <form action="<?= route('gui.layout.store') ?>" method="POST" class="space-y-4">
         <?= inputField('title', 'Page Title') ?>
