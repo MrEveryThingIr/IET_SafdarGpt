@@ -39,6 +39,8 @@ Route::get('gui/sidebar/script', 'DeveloperInterfaceControllers\\SidebarControll
 
 // ─── Form ─────────────────────────────────────────────────────────────────────
 Route::get('gui/form/create', 'DeveloperInterfaceControllers\\FormController@create')->name('gui.form.create');
+Route::post('gui/form/preview', 'DeveloperInterfaceControllers\\DeveloperController@preview')->name('gui.form.preview');
+
 Route::get('gui/form/index', 'DeveloperInterfaceControllers\\FormController@index')->name('gui.form.index');
 Route::get('gui/form/style', 'DeveloperInterfaceControllers\\FormController@style')->name('gui.form.style');
 Route::get('gui/form/script', 'DeveloperInterfaceControllers\\FormController@script')->name('gui.form.script');
@@ -49,6 +51,8 @@ Route::get('gui/preview', 'DeveloperInterfaceControllers\\PreviewController@inde
 Route::post('gui/json/save', 'DeveloperInterfaceControllers\\JsonAssetController@save')->name('gui.json.save');
 Route::get('gui/json/fetch', 'DeveloperInterfaceControllers\\JsonAssetController@fetch')->name('gui.json.fetch');
 
+// Renders the UI view
+Route::get('/developer/{view_name}', 'DeveloperInterfaceControllers\\DeveloperController@view');
 
-// roadmap to launching
-Route::get('gui/roadmap', 'RoadMapController@roadmap')->name('gui.roadmap');
+// API route: returns the config JSON via controller (NOT flat file)
+Route::get('/developer/config/{view_name}', 'JsonFlowController@apiViewConfig');

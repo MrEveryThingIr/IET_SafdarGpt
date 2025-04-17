@@ -26,7 +26,8 @@ class Sidebar implements RenderableInterface
 
         ob_start();
         extract($templateData, EXTR_SKIP);
-        include views_path('molecules/sidebar.php'); // single sidebar template
+        include views_path('templates/sidebar_template.php');
+        // single sidebar template
         return ob_get_clean();
     }
 

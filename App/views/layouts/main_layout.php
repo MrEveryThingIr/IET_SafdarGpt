@@ -9,21 +9,22 @@
         <link rel="stylesheet" href="<?= base_url($cssPath) ?>">
     <?php endforeach; ?>
 </head>
-<body class="bg-gray-100 font-sans flex">
+<body data-view=<?= htmlspecialchars($title ?? 'IET Interface') ?> class="bg-gray-100 font-sans flex">
 
 <div class="w-full flex h-screen">
     <?= $sidebarHtml ?? '' ?>
     <div class="flex flex-col flex-1 overflow-y-auto">
         <?= $navbarHtml ?? '' ?>
-        <main class="p-4"><?= $content ?? '' ?></main>
+        <main class="p-4"><?= $content ??  '' ?></main>
     </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
 <?php foreach ($scriptsPaths ?? [] as $jsPath): ?>
-    <script src="<?= base_url($jsPath) ?>"></script>
+    <script type="module" src="<?= base_url($jsPath) ?>"></script>
 <?php endforeach; ?>
+
 
 </body>
 </html>

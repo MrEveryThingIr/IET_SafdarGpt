@@ -1,0 +1,32 @@
+{
+    "functions": [
+        {
+            "key": "cloneElement",
+            "args": {
+                "triggerSelector": ".add_input",
+                "targetSelector": ".input",
+                "eventType": "click",
+                "appendToSelector": "#input-container"
+            }
+        },
+        {
+            "key": "cloneElement",
+            "args": {
+                "triggerSelector": ".add_selectoption",
+                "targetSelector": ".selectoption",
+                "eventType": "click",
+                "appendToSelector": "#select-container"
+            }
+        },
+        {
+            "key": "delegateEvent",
+            "args": {
+                "parentSelector": "#select-container",
+                "triggerSelector": ".addoption",
+                "targetSelector": ".option",
+                "eventType": "click",
+                "appendToSelector": "closest:.selectoption"
+            }
+        }
+    ]
+}

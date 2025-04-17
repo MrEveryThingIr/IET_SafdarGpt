@@ -39,11 +39,6 @@ class BaseController
         return route($name, $params);
     }
 
-    protected function sanitize(string $value): string
-    {
-        return Sanitizer::sanitizeHtmlEntities($value);
-    }
-
     protected function isLoggedIn(): bool
     {
         return isLoggedIn();

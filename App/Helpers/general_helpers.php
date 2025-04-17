@@ -3,7 +3,7 @@
 use App\Core\Route;
 use App\FileServices\UploadService;
 use App\Helpers\Sanitizer;
-require_once __DIR__ . '/json_component_helpers.php';
+
 
 function base_url($path = '') {
     if (defined('BASE_URL')) {
@@ -57,9 +57,6 @@ function config($key, $default = null) {
 }
 
 
-function sanitize($value) {
-    return Sanitizer::sanitizeHtmlEntities($value);
-}
 
 function isLoggedIn() {
     return isset($_SESSION["user_id"]);
