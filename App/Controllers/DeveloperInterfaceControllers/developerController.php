@@ -45,137 +45,85 @@ class DeveloperController extends BaseController
         $cssAttributes = include __DIR__ . '/../../HTMLRenderer/cssAttributes.php';
         $safeView = basename($view_name);
 
-        $config = [
-            'functions' => [
-              [
-                'key' => 'cloneElement',
-                'args' => [
-                  'triggerSelector' => '.add_input',
-                  'targetSelector' => '.input',
-                  'appendToSelector' => '#input-container',
-                  'eventType' => 'click',
-                  'contextKey' => 'input' // optional
-                ]
-              ],
-              [
-                'key' => 'cloneElement',
-                'args' => [
-                  'triggerSelector' => '.add_selectoption',
-                  'targetSelector' => '.selectoption',
-                  'appendToSelector' => '#select-container',
-                  'eventType' => 'click',
-                  'contextKey' => 'selectoption'
-                ]
-              ],
-              [
-                'key' => 'delegateEvent',
-                'args' => [
-                  'parentSelector' => '#select-container',
-                  'triggerSelector' => '.addoption',
-                  'targetSelector' => '.option',
-                  'eventType' => 'click',
-                  'appendToSelector' => 'closest:.selectoption',
-                  'contextKey' => 'selectoption'
-                ]
-              ]
-            ]
-          ];
-          
-
-        $model = new FormJsonModel();
-        $saveSuccess = $model->storeConfigArray($safeView, $config);
-
-        if (!$saveSuccess) {
-            die("❌ Failed to save config for view: $safeView");
+        $configFile = base_path("json_files/{$safeView}.json");
+        if (!file_exists($configFile)) {
+            die("❌ Config file not found: {$safeView}.json");
         }
 
-        $html = $this->layout->render([
+        $json = json_decode(file_get_contents($configFile), true);
+        if (!$json || !isset($json['functions'])) {
+            die("❌ Invalid or missing 'functions' in config: {$safeView}.json");
+        }
+
+        $model = new FormJsonModel();
+        $model->storeConfigArray($safeView, $json);
+
+        echo $this->layout->render([
             'view' => 'developer_graphical_interface/' . $safeView,
             'viewData' => [
                 'css' => $cssAttributes
             ]
         ]);
-
-        echo $html;
     }
-
 
     public function preview(): void
-{
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        http_response_code(405);
-        echo 'Method Not Allowed';
-        return;
-    }
-
-    $formConfig = $_POST;
-
-    // Process and normalize dynamic fields
-    $formConfig = $this->normalizeFormConfig($formConfig);
-
-    // Render using the template view
-    render('templates/form_template', ['form_config' => $formConfig], 'layouts/main_layout');
-}
-
-/**
- * Normalize form config with nested inputs/selects
- */
-private function normalizeFormConfig(array $post): array
-{
-    $result = [
-        'formname'      => $post['formname'] ?? '',
-        'action'        => $post['action'] ?? '',
-        'method'        => $post['method'] ?? 'post',
-        'submitbutton'  => $post['submitbutton'] ?? 'Submit',
-        'classes'       => $post['classes'] ?? '',
-        'inputs'        => [],
-        'selects'       => [],
-    ];
-
-    // Parse inputs
-    $names = $post['name'] ?? [];
-    foreach ($names as $i => $name) {
-        if (empty($name)) continue;
-
-        $result['inputs'][] = [
-            'name'        => $name,
-            'placeholder' => $post['placeholder'][$i] ?? '',
-            'id'          => $post['id'][$i] ?? '',
-            'value'       => $post['value'][$i] ?? '',
-            'class'       => $post['class'][$i] ?? '',
-            'type'        => $post['type'][$i] ?? 'text',
-        ];
-    }
-
-    // Parse selects and their options
-    $selectNames = $post['select_name'] ?? [];
-    foreach ($selectNames as $i => $selectName) {
-        if (empty($selectName)) continue;
-
-        $select = [
-            'name'    => $selectName,
-            'id'      => $post['select_id'][$i] ?? '',
-            'classes' => $post['select_classes'][$i] ?? '',
-            'options' => [],
-        ];
-
-        // Get corresponding options (assumes flat index alignment, refine as needed)
-        $optionLabels = $post['option_label'] ?? [];
-        $optionValues = $post['option_value'] ?? [];
-
-        for ($j = 0; $j < count($optionLabels); $j++) {
-            if (!empty($optionLabels[$j]) || !empty($optionValues[$j])) {
-                $select['options'][] = [
-                    'label' => $optionLabels[$j],
-                    'value' => $optionValues[$j],
-                ];
-            }
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo 'Method Not Allowed';
+            return;
         }
 
-        $result['selects'][] = $select;
+        $formConfig = $this->normalizeFormConfig($_POST);
+        render('templates/form_template', ['form_config' => $formConfig], 'layouts/main_layout');
     }
 
-    return $result;
-}
+    private function normalizeFormConfig(array $post): array
+    {
+        $result = [
+            'formname'     => $post['formname'] ?? '',
+            'action'       => $post['action'] ?? '',
+            'method'       => $post['method'] ?? 'post',
+            'submitbutton' => $post['submitbutton'] ?? 'Submit',
+            'classes'      => $post['classes'] ?? '',
+            'inputs'       => [],
+            'selects'      => [],
+        ];
 
+        $inputCount = count($post['name']);
+        for ($i = 0; $i < $inputCount; $i++) {
+            $result['inputs'][] = [
+                'name'        => $post['name'][$i][0] ?? '',
+                'placeholder' => $post['placeholder'][$i][0] ?? '',
+                'id'          => $post['id'][$i][0] ?? '',
+                'value'       => $post['value'][$i][0] ?? '',
+                'class'       => $post['class'][$i][0] ?? '',
+                'type'        => $post['type'][$i][0] ?? 'text',
+            ];
+        }
+
+        $selectCount = count($post['select_name']);
+        for ($i = 0; $i < $selectCount; $i++) {
+            $select = [
+                'name'    => $post['select_name'][$i][0] ?? '',
+                'id'      => $post['select_id'][$i][0] ?? '',
+                'classes' => $post['select_classes'][$i][0] ?? '',
+                'options' => [],
+            ];
+
+            $optionLabels = $post['option_label'][$i] ?? [];
+            $optionValues = $post['option_value'][$i] ?? [];
+
+            foreach ($optionLabels as $j => $label) {
+                $select['options'][] = [
+                    'label' => $label ?? '',
+                    'value' => $optionValues[$j] ?? '',
+                ];
+            }
+
+            $result['selects'][] = $select;
+        }
+
+        return $result;
+    }
 }

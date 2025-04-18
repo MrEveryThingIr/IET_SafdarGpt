@@ -4,7 +4,7 @@
   <div class="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow">
     <h1 class="text-3xl font-bold mb-6">Create New Form</h1>
 
-    <form action="<?= route('gui.form.preview') ?>" method="post" class="space-y-5">
+    <form action="<?= route('developer.form.preview')  ?>" method="post" class="space-y-5">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label for="formname" class="block text-sm font-medium mb-1">Form Name</label>

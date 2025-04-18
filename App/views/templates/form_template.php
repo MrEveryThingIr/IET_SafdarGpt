@@ -11,7 +11,7 @@
                 type="<?= htmlspecialchars($input['type']) ?>"
                 name="<?= htmlspecialchars($input['name']) ?>"
                 placeholder="<?= htmlspecialchars($input['placeholder']) ?>"
-                id="<?= htmlspecialchars($input['id']) ?>"
+                id="<?= htmlspecialchars($input['id'])?>"
                 value="<?= htmlspecialchars($input['value']) ?>"
                 class="<?= htmlspecialchars($input['class']) ?>"
             />
