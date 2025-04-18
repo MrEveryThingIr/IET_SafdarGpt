@@ -5,8 +5,9 @@
             "args": {
                 "triggerSelector": ".add_input",
                 "targetSelector": ".input",
+                "appendToSelector": "#input-container",
                 "eventType": "click",
-                "appendToSelector": "#input-container"
+                "contextKey": "input"
             }
         },
         {
@@ -14,8 +15,9 @@
             "args": {
                 "triggerSelector": ".add_selectoption",
                 "targetSelector": ".selectoption",
+                "appendToSelector": "#select-container",
                 "eventType": "click",
-                "appendToSelector": "#select-container"
+                "contextKey": "selectoption"
             }
         },
         {
@@ -25,7 +27,8 @@
                 "triggerSelector": ".addoption",
                 "targetSelector": ".option",
                 "eventType": "click",
-                "appendToSelector": "closest:.selectoption"
+                "appendToSelector": "closest:.selectoption",
+                "contextKey": "selectoption"
             }
         }
     ]

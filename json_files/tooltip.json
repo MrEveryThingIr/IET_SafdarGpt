@@ -1,0 +1,16 @@
+{
+    "name": "Tooltip",
+    "description": "Attaches a tooltip to an element that shows on hover or click.",
+    "usage": "Hints for buttons, info icons, input fields.",
+    "functions": [
+      {
+        "key": "tooltip",
+        "args": {
+          "triggerSelector": "[data-tooltip]",
+          "eventType": "hover"
+        }
+      }
+    ],
+    "exampleHtml": "<button data-tooltip=\"Click to save\">💾</button>"
+  }
+  

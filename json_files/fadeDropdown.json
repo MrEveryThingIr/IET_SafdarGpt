@@ -1,0 +1,23 @@
+{
+    "name": "Fade + Dropdown",
+    "description": "Combines dropdown functionality with a fade effect.",
+    "usage": "Use for soft opening menus or animated dropdowns.",
+    "functions": [
+      {
+        "key": "dropdown",
+        "args": {
+          "triggerSelector": "#fadeDropdownBtn",
+          "dropdownSelector": "#fadeDropdownContent"
+        }
+      },
+      {
+        "key": "fadeIn",
+        "args": {
+          "targetSelector": "#fadeDropdownContent",
+          "duration": 300
+        }
+      }
+    ],
+    "exampleHtml": "<button id=\"fadeDropdownBtn\">Toggle Menu</button>\n<div id=\"fadeDropdownContent\" class=\"hidden\">...</div>"
+  }
+  

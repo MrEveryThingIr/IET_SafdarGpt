@@ -21,6 +21,13 @@ class JsonFlowController
         $model = new FormJsonModel();
         $config = $model->getConfigArray($safeView);
 
+        if (empty($config)) {
+            JsonApiHelper::sendJsonResponse([
+                'error' => 'No config found for view: ' . $safeView
+            ], 404);
+        }
+
+
         JsonApiHelper::sendJsonResponse($config);
     }
 

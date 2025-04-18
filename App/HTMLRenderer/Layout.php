@@ -5,25 +5,18 @@ class Layout implements RenderableInterface
 {
     private ?Navbar $navbar;
     private ?Sidebar $sidebar;
-
-    /**
-     * Layout-level config, e.g. its own styles/scripts, or a title, etc.
-     */
     private array $config;
 
-    public function __construct(
-        ?Navbar $navbar = null,
-        ?Sidebar $sidebar = null,
-        array $config = []
-    ) {
-        $this->navbar  = $navbar;
+    public function __construct(?Navbar $navbar = null, ?Sidebar $sidebar = null, array $config = [])
+    {
+        $this->navbar = $navbar;
         $this->sidebar = $sidebar;
 
         $defaults = [
             'title'        => 'My Website',
-            'stylesPaths'  => [],  // e.g. ['assets/css/global.css']
-            'scriptsPaths' => [],  // e.g. ['assets/js/global.js']
-            'layoutView'   => 'layouts/main_layout', // the single layout file => views/layout.php
+            'stylesPaths'  => [],
+            'scriptsPaths' => [],
+            'layoutView'   => 'layouts/main_layout',
         ];
 
         $this->config = array_merge($defaults, $config);
@@ -31,14 +24,10 @@ class Layout implements RenderableInterface
 
     public function render(array $data = []): string
     {
-        /**
-         * $data might have:
-         *   'view' => 'home/register',   // which view file to load
-         *   'viewData' => [...],         // data for that view
-         * etc.
-         */
-        $view      = $data['view']     ?? '';  // the main content
-        $viewData  = $data['viewData'] ?? [];  // data to pass to main content
+        $view      = $data['view']     ?? '';
+        $viewData  = $data['viewData'] ?? [];
+        
+
 
         // 1) Render the navbar
         $navbarHtml = $this->navbar ? $this->navbar->render() : '';
@@ -47,46 +36,58 @@ class Layout implements RenderableInterface
         $sidebarHtml = $this->sidebar ? $this->sidebar->render() : '';
 
         // 3) Render the main content
-        ob_start();
-        extract($viewData, EXTR_SKIP);
+        $content = '';
+
         if (!empty($view)) {
-            include views_path($view . '.php');
+            $viewPath = views_path($view . '.php');
+
+            if (file_exists($viewPath)) {
+                ob_start();
+                extract($viewData, EXTR_SKIP);
+                include $viewPath;
+                $content = ob_get_clean();
+            } else {
+                // ⛔ Developer-friendly error
+                $content = "<div style='padding:1em;background:#fdd;color:#900;border:1px solid #f00'>
+                    <strong>❌ View file not found:</strong><br>
+                    <code>$viewPath</code>
+                </div>";
+            }
         } else {
-            echo "<p>No main view specified.</p>";
+            $content = "<p>No main view specified.</p>";
         }
-        $content = ob_get_clean();
 
-        // 4) Merge all CSS & JS
-        //    Layout's + Navbar's + Sidebar's
-        $allStyles  = array_merge(
+        // 4) Merge all assets
+        $allStyles = array_unique(array_merge(
             $this->config['stylesPaths'],
-            $this->navbar  ? $this->navbar->getStylesPaths()  : [],
-            $this->sidebar ? $this->sidebar->getStylesPaths() : []
-        );
-        // Remove duplicates, just in case
-        $allStyles = array_unique($allStyles);
+            $this->navbar?->getStylesPaths() ?? [],
+            $this->sidebar?->getStylesPaths() ?? []
+        ));
 
-        $allScripts = array_merge(
+        $allScripts = array_unique(array_merge(
             $this->config['scriptsPaths'],
-            $this->navbar  ? $this->navbar->getScriptsPaths()  : [],
-            $this->sidebar ? $this->sidebar->getScriptsPaths() : []
-        );
-        $allScripts = array_unique($allScripts);
+            $this->navbar?->getScriptsPaths() ?? [],
+            $this->sidebar?->getScriptsPaths() ?? []
+        ));
 
-        // 5) Now render the single layout template
+        // 5) Final layout rendering
         ob_start();
         $layoutData = [
-            'title'       => $this->config['title'],
-            'stylesPaths' => $allStyles,
-            'scriptsPaths'=> $allScripts,
-            'navbarHtml'  => $navbarHtml,
-            'sidebarHtml' => $sidebarHtml,
-            'content'     => $content
+            'title'        => $this->config['title'],
+            'stylesPaths'  => $allStyles,
+            'scriptsPaths' => $allScripts,
+            'navbarHtml'   => $navbarHtml,
+            'sidebarHtml'  => $sidebarHtml,
+            'content'      => $content,
         ];
         extract($layoutData, EXTR_SKIP);
 
-        // e.g. "views/layout.php"
-        include views_path($this->config['layoutView'] . '.php');
+        $layoutFile = views_path($this->config['layoutView'] . '.php');
+        if (!file_exists($layoutFile)) {
+            return "<p>❌ Layout file not found: <code>$layoutFile</code></p>";
+        }
+
+        include $layoutFile;
         return ob_get_clean();
     }
 }

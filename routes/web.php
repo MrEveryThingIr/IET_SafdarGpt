@@ -54,5 +54,7 @@ Route::get('gui/json/fetch', 'DeveloperInterfaceControllers\\JsonAssetController
 // Renders the UI view
 Route::get('/developer/{view_name}', 'DeveloperInterfaceControllers\\DeveloperController@view');
 
-// API route: returns the config JSON via controller (NOT flat file)
-Route::get('/developer/config/{view_name}', 'JsonFlowController@apiViewConfig');
+
+Route::get('/developer/docs', 'DeveloperInterfaceControllers\\DocsController@index')->name('docs.index');
+Route::get('/developer/docs/view/{docName}', 'DeveloperInterfaceControllers\\DocsController@view')->name('docs.view');
+Route::get('/developer/config/{view_name}', 'JsonFlowController@apiViewConfig')->name('developer.config');

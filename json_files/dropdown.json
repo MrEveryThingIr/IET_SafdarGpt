@@ -1,0 +1,18 @@
+{
+    "name": "Dropdown",
+    "description": "Toggles visibility of a dropdown panel on trigger click.",
+    "usage": "Useful for user menus, filter panels, action sheets in forms or tables.",
+    "functions": [
+      {
+        "key": "dropdown",
+        "args": {
+          "triggerSelector": "#dropdownToggle",
+          "dropdownSelector": "#dropdownPanel",
+          "eventType": "click"
+        }
+      }
+    ],
+    "combinesWith": ["fade", "toggle"],
+    "exampleHtml": "<button id=\"dropdownToggle\">Menu</button>\n<div id=\"dropdownPanel\" class=\"hidden\">...</div>"
+  }
+  

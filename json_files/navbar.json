@@ -1,0 +1,17 @@
+{
+    "name": "Navbar Dropdown",
+    "description": "Handles dropdown menus from nav buttons (e.g., profile or settings).",
+    "usage": "Navigation dropdowns, profile menu toggles, mobile nav.",
+    "functions": [
+      {
+        "key": "dropdown",
+        "args": {
+          "triggerSelector": "#navBtn",
+          "dropdownSelector": "#navMenu",
+          "eventType": "click"
+        }
+      }
+    ],
+    "exampleHtml": "<button id=\"navBtn\">▼</button>\n<ul id=\"navMenu\" class=\"hidden\">...</ul>"
+  }
+  

@@ -24,7 +24,9 @@ function base_path($path = '') {
 }
 
 function views_path($path = '') {
-    return base_path('App/views/' . ltrim($path, '/'));
+    $resolved = base_path('App/views/' . ltrim($path, '/'));
+    error_log("🔍 views_path() => " . $resolved);
+    return $resolved;
 }
 
 function redirect($path = '', $queryParams = []) {

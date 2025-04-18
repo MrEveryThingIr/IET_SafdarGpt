@@ -1,0 +1,22 @@
+{
+    "name": "Autosave + Class Editor",
+    "description": "Autosaves form data in background and allows live editing of class names (e.g., for Tailwind).",
+    "usage": "Form builders, theme editors, design systems.",
+    "functions": [
+      {
+        "key": "autosave",
+        "args": {
+          "formSelector": "#formBuilder",
+          "url": "/api/autosave"
+        }
+      },
+      {
+        "key": "classEditor",
+        "args": {
+          "targetSelector": "#classInput"
+        }
+      }
+    ],
+    "exampleHtml": "<form id=\"formBuilder\">...</form>\n<input id=\"classInput\" value=\"bg-red-500\">"
+  }
+  

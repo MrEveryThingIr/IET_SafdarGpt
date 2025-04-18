@@ -1,0 +1,17 @@
+{
+    "name": "Sidebar Toggle",
+    "description": "Toggles visibility of a sidebar layout.",
+    "usage": "Use in admin panels, dashboards, layout builders.",
+    "functions": [
+      {
+        "key": "toggle",
+        "args": {
+          "triggerSelector": "#toggleSidebar",
+          "targetSelector": "#sidebar",
+          "className": "hidden"
+        }
+      }
+    ],
+    "exampleHtml": "<button id=\"toggleSidebar\">☰</button>\n<aside id=\"sidebar\" class=\"hidden\">Sidebar</aside>"
+  }
+  

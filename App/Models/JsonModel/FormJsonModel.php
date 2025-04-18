@@ -72,13 +72,29 @@ class FormJsonModel
         return $data;
     }
 
-    public function storeConfigArray(string $view, array $config = []): bool
-    {
-        return $this->saveJsonArray($view, $config);
-    }
-
     public function getConfigArray(string $view): array
     {
-        return $this->getJsonArray($view);
+        $safeView = basename($view);
+        $path = base_path("json_files/{$safeView}.json");
+    
+        if (!file_exists($path)) {
+            error_log("Config not found: {$path}"); // optional log
+            return [];
+        }
+    
+        $json = file_get_contents($path);
+        return json_decode($json, true) ?? [];
+    }
+    
+
+    public function storeConfigArray(string $view, array $data = []): bool
+    {
+        $safeView = basename($view);
+        $path = base_path("json_files/{$safeView}.json");  // ✅ absolute
+
+        return file_put_contents($path, json_encode($data, JSON_PRETTY_PRINT)) !== false;
     }
 }
+
+    
+

@@ -1,0 +1,17 @@
+{
+    "name": "Modal",
+    "description": "Handles modal opening and closing behavior via button clicks.",
+    "usage": "Use for confirmations, dialogs, popups, etc.",
+    "functions": [
+      {
+        "key": "toggle",
+        "args": {
+          "triggerSelector": "#openModal",
+          "targetSelector": "#modalBox",
+          "className": "hidden"
+        }
+      }
+    ],
+    "exampleHtml": "<button id=\"openModal\">Open Modal</button>\n<div id=\"modalBox\" class=\"hidden\">Modal Content</div>"
+  }
+  

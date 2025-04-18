@@ -1,0 +1,16 @@
+{
+    "name": "Modal + Toggle",
+    "description": "Shows and hides modal with toggle behavior (e.g., hidden class), optionally layered with escape key handling.",
+    "usage": "Dialog components, popups.",
+    "functions": [
+      {
+        "key": "toggle",
+        "args": {
+          "triggerSelector": "#openModalBtn",
+          "targetSelector": "#modalBox"
+        }
+      }
+    ],
+    "exampleHtml": "<button id=\"openModalBtn\">Show Modal</button>\n<div id=\"modalBox\" class=\"hidden\">Modal Content</div>"
+  }
+  

@@ -1,0 +1,39 @@
+{
+    "name": "Form Builder",
+    "description": "Dynamically clones input/select/option blocks based on trigger interactions.",
+    "usage": "Used in admin panels, CMS builders, form generators, or survey UIs.",
+    "functions": [
+      {
+        "key": "cloneElement",
+        "args": {
+          "triggerSelector": ".add_input",
+          "targetSelector": ".input",
+          "appendToSelector": "#input-container",
+          "eventType": "click"
+        }
+      },
+      {
+        "key": "cloneElement",
+        "args": {
+          "triggerSelector": ".add_selectoption",
+          "targetSelector": ".selectoption",
+          "appendToSelector": "#select-container",
+          "eventType": "click",
+          "contextKey": "selectoption"
+        }
+      },
+      {
+        "key": "delegateEvent",
+        "args": {
+          "parentSelector": "#select-container",
+          "triggerSelector": ".addoption",
+          "targetSelector": ".option",
+          "appendToSelector": "closest:.selectoption",
+          "eventType": "click",
+          "contextKey": "selectoption"
+        }
+      }
+    ],
+    "exampleHtml": "<button class=\"add_input\">Add Input</button>\n<div id=\"input-container\"></div>\n<fieldset class=\"input hidden\">...</fieldset>"
+  }
+  

@@ -1,11 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <title>Create New Form</title>
-</head>
+
 <body class="bg-gray-50 p-6 text-gray-800">
 
   <div class="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow">
@@ -36,7 +29,11 @@
 
       <div>
         <label for="classes" class="block text-sm font-medium mb-1">Classes for styles or JS</label>
-        <textarea name="classes" id="classes" rows="3" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+        <textarea name="classes" id="classes" rows="3"
+          class="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <?= htmlspecialchars($data['viewData']['css']['form'] ?? '') ?>
+        </textarea>
+        
       </div>
 
       <div class="flex flex-wrap gap-4">
@@ -117,7 +114,9 @@
 
           <div class="mb-3">
             <label class="block text-sm font-medium mb-1">Classes</label>
-            <textarea name="select_classes[]" rows="2" class="w-full border border-gray-300 px-3 py-2 rounded-md"></textarea>
+            <textarea name="select_classes[]" rows="2" class="w-full border border-gray-300 px-3 py-2 rounded-md">
+            <?= htmlspecialchars($data['viewData']['css']['select-box'] ?? '') ?>
+            </textarea>
           </div>
 
           <button type="button" class="addoption bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md transition">Add Option</button>
@@ -135,6 +134,3 @@
       <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-md mt-4 transition">Submit</button>
     </form>
   </div>
-
-</body>
-</html>

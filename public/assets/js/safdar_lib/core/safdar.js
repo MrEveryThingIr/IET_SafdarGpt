@@ -1,144 +1,100 @@
-// /core/Safdar.js
 class Safdar {
-    constructor() {
-      this.registered = {};
-    }
-  
-    // General method: attach an event to a trigger selector to perform action on target selector
-    bindEvent({ triggerSelector, targetSelector, eventType, action }) {
-      const triggers = document.querySelectorAll(triggerSelector);
-      const target = document.querySelector(targetSelector);
-  
-      if (!triggers.length || !target) return;
-  
-      triggers.forEach(trigger => {
-        trigger.addEventListener(eventType, e => {
-          if (typeof action === 'function') {
-            action({ trigger: trigger, target: target, event: e });
-          }
-        });
-      });
-    }
-  
-    // Show target element
-    showElement({ triggerSelector, targetSelector, eventType }) {
-      this.bindEvent({
-        triggerSelector,
-        targetSelector,
-        eventType,
-        action: ({ target }) => {
-          target.style.display = 'block';
-        }
-      });
-    }
-  
-    // Hide target element
-    hideElement({ triggerSelector, targetSelector, eventType }) {
-      this.bindEvent({
-        triggerSelector,
-        targetSelector,
-        eventType,
-        action: ({ target }) => {
-          target.style.display = 'none';
-        }
-      });
-    }
-  
-    // Toggle target element visibility
-    toggleElement({ triggerSelector, targetSelector, eventType }) {
-      this.bindEvent({
-        triggerSelector,
-        targetSelector,
-        eventType,
-        action: ({ target }) => {
-          const isVisible = getComputedStyle(target).display !== 'none';
-          target.style.display = isVisible ? 'none' : 'block';
-        }
-      });
-    }
+  constructor() {
+    this.registry = {};         // custom/utility functions
+    this.indexMap = new Map();  // for managing dynamic clone indices
+  }
 
-    cloneElement({ triggerSelector, targetSelector, eventType, appendToSelector }) {
-      this.bindEvent({
-        triggerSelector,
-        targetSelector,
-        eventType,
-        action: ({ trigger, target }) => {
-          const clone = target.cloneNode(true);
-          clone.classList.remove('hidden');
-    
-          let appendTo = null;
-    
-          if (appendToSelector.startsWith('closest:')) {
-            const relativeSelector = appendToSelector.replace('closest:', '');
-            const closestParent = trigger.closest(relativeSelector);
-    
-            // If we're targeting options inside selectoption, find option-container
-            appendTo = closestParent?.querySelector('.option-container');
-          } else {
-            appendTo = document.querySelector(appendToSelector);
-          }
-    
-          if (appendTo) {
-            appendTo.appendChild(clone);
-          } else {
-            console.warn(`Safdar: append target not found for selector "${appendToSelector}"`);
-          }
-        }
+  call(name, args = {}) {
+    const fn = this.registry[name] || this[name];
+    if (typeof fn === 'function') {
+      return fn.call(this, args);
+    } else {
+      console.warn(`Safdar: Function "${name}" not found.`);
+    }
+  }
+
+  registerFunction(name, fn) {
+    if (typeof fn === 'function') {
+      this.registry[name] = fn;
+    }
+  }
+
+  bindEvent({ triggerSelector, targetSelector, eventType = 'click', action }) {
+    const triggers = document.querySelectorAll(triggerSelector);
+    const target = targetSelector ? document.querySelector(targetSelector) : null;
+
+    triggers.forEach(trigger => {
+      trigger.addEventListener(eventType, (event) => {
+        action?.({ trigger, target, event });
       });
-    }
-    
-    
-  
-    // Register new functionality dynamically
-    registerFunction(name, fn) {
-      this.registered[name] = fn;
-    }
-  
-    // Call any registered function by name
-    call(name, args) {
-      if (this.registered[name]) {
-        this.registered[name](args);
-      } else if (typeof this[name] === 'function') {
-        this[name](args);
-      } else {
-        console.warn(`Safdar: function "${name}" not found.`);
+    });
+  }
+
+  delegateEvent({ parentSelector = 'body', triggerSelector, eventType = 'click', targetSelector, appendToSelector }) {
+    const parent = document.querySelector(parentSelector);
+    if (!parent) return;
+
+    parent.addEventListener(eventType, (e) => {
+      if (e.target.matches(triggerSelector)) {
+        const target = document.querySelector(targetSelector);
+        if (!target) return;
+
+        const clone = target.cloneNode(true);
+        clone.classList.remove('hidden');
+
+        const appendTo = appendToSelector.startsWith('closest:')
+          ? e.target.closest(appendToSelector.replace('closest:', ''))?.querySelector('.option-container')
+          : document.querySelector(appendToSelector);
+
+        if (appendTo) {
+          appendTo.appendChild(clone);
+
+          const fieldsets = document.querySelectorAll('.selectoption');
+          const currentIndex = [...fieldsets].indexOf(e.target.closest('.selectoption'));
+
+          clone.querySelectorAll('[name]').forEach(input => {
+            input.name = input.name.replace(/\[\]/, `[${currentIndex}][]`);
+          });
+        } else {
+          console.warn(`Safdar: append target not found for selector "${appendToSelector}"`);
+        }
       }
-    }
+    });
+  }
 
-    // Bind using event delegation (for dynamic elements)
-delegateEvent({ parentSelector = 'body', triggerSelector, eventType, targetSelector, appendToSelector }) {
-  const parent = document.querySelector(parentSelector);
+  cloneElement({ triggerSelector, targetSelector, appendToSelector, eventType = 'click', contextKey }) {
+    this.bindEvent({
+      triggerSelector,
+      targetSelector,
+      eventType,
+      action: ({ trigger, target }) => {
+        if (!target) return;
+        const clone = target.cloneNode(true);
+        clone.classList.remove('hidden');
 
-  if (!parent) return;
+        let appendTo = appendToSelector.startsWith('closest:')
+          ? trigger.closest(appendToSelector.replace('closest:', ''))?.querySelector('.option-container')
+          : document.querySelector(appendToSelector);
 
-  parent.addEventListener(eventType, (e) => {
-    if (e.target.matches(triggerSelector)) {
-      const target = document.querySelector(targetSelector); // the hidden clone source
-      if (!target) return;
+        if (appendTo) {
+          appendTo.appendChild(clone);
 
-      const clone = target.cloneNode(true);
-      clone.classList.remove('hidden');
+          if (contextKey) {
+            const count = (this.indexMap.get(contextKey) ?? 0);
+            this.indexMap.set(contextKey, count + 1);
 
-      let appendTo = null;
+            clone.querySelectorAll('[name]').forEach(input => {
+              input.name = input.name.replace(/\[\]/, `[${count}][]`);
+            });
 
-      if (appendToSelector.startsWith('closest:')) {
-        const relativeSelector = appendToSelector.replace('closest:', '');
-        const closestParent = e.target.closest(relativeSelector);
-        appendTo = closestParent?.querySelector('.option-container');
-      } else {
-        appendTo = document.querySelector(appendToSelector);
+            clone.dataset.contextIndex = count;
+          }
+        } else {
+          console.warn(`Safdar: appendTo target not found for selector "${appendToSelector}"`);
+        }
       }
-
-      if (appendTo) {
-        appendTo.appendChild(clone);
-      } else {
-        console.warn(`Safdar: append target not found for selector "${appendToSelector}"`);
-      }
-    }
-  });
+    });
+  }
 }
 
-  }
-  
-  export default Safdar;
-  
+export default Safdar;
