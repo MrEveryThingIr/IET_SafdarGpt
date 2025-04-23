@@ -1,0 +1,31 @@
+# Node / Frontend (if applicable)
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Composer dependencies
+/vendor/
+
+# Environment files
+.env
+
+# IDE + System junk
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.log
+
+# VS Code
+.vscode/
+
+# PHPUnit cache
+.phpunit.result.cache
+
+# Storage / Cache (if you add later)
+storage/cache/
+storage/logs/
+
+# Uploads (if user files are uploaded)
+public/assets/uploads/

@@ -1,0 +1,21 @@
+{
+    "name": "Fade",
+    "description": "Fades an element in or out using opacity + display.",
+    "functions": [
+      {
+        "key": "fadeIn",
+        "args": {
+          "targetSelector": ".fade-target",
+          "duration": 300
+        }
+      },
+      {
+        "key": "fadeOut",
+        "args": {
+          "targetSelector": ".fade-target",
+          "duration": 300
+        }
+      }
+    ]
+  }
+  

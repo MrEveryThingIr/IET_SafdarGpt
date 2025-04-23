@@ -1,0 +1,19 @@
+{
+    "name": "im-everything/iet_5",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "App\\": "App/"
+        },
+        "files": [
+            "App/Helpers/general_helpers.php"
+          ]
+    },
+    "authors": [
+        {
+            "name": "Safdar"
+        }
+    ],
+    "require": {}
+}

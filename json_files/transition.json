@@ -1,0 +1,14 @@
+{
+    "name": "Transition",
+    "description": "Applies CSS transition to an element.",
+    "functions": [
+      {
+        "key": "applyTransition",
+        "args": {
+          "selector": ".transition-target",
+          "transition": "all 300ms ease-in-out"
+        }
+      }
+    ]
+  }
+  

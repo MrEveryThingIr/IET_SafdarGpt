@@ -1,0 +1,14 @@
+{
+    "name": "DOM Observer",
+    "description": "Watches DOM changes using MutationObserver.",
+    "functions": [
+      {
+        "key": "watchDomChange",
+        "args": {
+          "selector": "#watchedElement",
+          "callback": null
+        }
+      }
+    ]
+  }
+  

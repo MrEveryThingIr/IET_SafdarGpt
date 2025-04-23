@@ -1,0 +1,14 @@
+{
+    "name": "Slide Toggle",
+    "description": "Toggles visibility with slide animation.",
+    "functions": [
+      {
+        "key": "slideToggle",
+        "args": {
+          "selector": ".slide-target",
+          "duration": 300
+        }
+      }
+    ]
+  }
+  

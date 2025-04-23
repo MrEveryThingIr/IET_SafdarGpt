@@ -1,0 +1,28 @@
+{
+  "name": "Dropdown",
+  "description": "Toggles dropdown panel visibility with optional animation and outside click handling.",
+  "functions": [
+    {
+      "key": "dropdown",
+      "args": {
+        "triggerSelector": "#dropdownToggle",
+        "dropdownSelector": "#dropdownPanel",
+        "eventType": "click",
+        "closeOnOutsideClick": true,
+        "activeClass": "active",
+        "hideClass": "hidden",
+        "preventDefault": true,
+        "animation": {
+          "type": "fade",
+          "duration": 300
+        },
+        "lifecycle": {
+          "beforeOpen": null,
+          "afterOpen": null,
+          "afterClose": null
+        }
+      }
+    }
+  ],
+  "combinesWith": ["fade", "toggle"]
+}

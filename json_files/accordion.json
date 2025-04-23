@@ -1,0 +1,24 @@
+{
+    "name": "Accordion",
+    "description": "Toggles expandable sections. Can auto-collapse others.",
+    "functions": [
+      {
+        "key": "accordion",
+        "args": {
+          "selector": ".accordion-item",
+          "headerClass": ".accordion-header",
+          "bodyClass": ".accordion-body",
+          "collapseOthers": false,
+          "animation": {
+            "type": null,
+            "duration": 300
+          },
+          "lifecycle": {
+            "afterOpen": null,
+            "afterClose": null
+          }
+        }
+      }
+    ]
+  }
+  

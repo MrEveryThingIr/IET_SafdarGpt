@@ -1,0 +1,22 @@
+{
+  "functions": [
+    {
+      "key": "delegateEvent",
+      "args": {
+        "parentSelector": "#input-container",
+        "triggerSelector": ".addoption",
+        "targetSelector": ".option",
+        "appendToSelector": "withinclosest:.input-option-group>.option-container"
+      }
+    },
+    {
+      "key": "delegateEvent",
+      "args": {
+        "parentSelector": "#select-container",
+        "triggerSelector": ".addoption",
+        "targetSelector": ".option",
+        "appendToSelector": "withinclosest:.selectoption>.option-container"
+      }
+    }
+  ]
+}

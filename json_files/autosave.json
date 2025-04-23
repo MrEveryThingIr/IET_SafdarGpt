@@ -1,0 +1,21 @@
+{
+  "name": "Toggle",
+  "description": "Toggles class, attribute, or style on target element.",
+  "functions": [
+    {
+      "key": "toggle",
+      "args": {
+        "triggerSelector": ".toggle-trigger",
+        "targetSelector": ".toggle-target",
+        "className": "hidden",
+        "eventType": "click",
+        "toggleMode": "class",
+        "attributeName": null,
+        "toggleText": {
+          "on": "Hide",
+          "off": "Show"
+        }
+      }
+    }
+  ]
+}

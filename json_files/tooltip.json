@@ -1,0 +1,21 @@
+{
+  "name": "Tooltip",
+  "description": "Shows a tooltip on hover or click. Position, delay and theme customizable.",
+  "functions": [
+    {
+      "key": "tooltip",
+      "args": {
+        "triggerSelector": "[data-tooltip]",
+        "eventType": "hover",
+        "placement": "bottom",
+        "delay": 0,
+        "theme": "dark",
+        "lifecycle": {
+          "afterOpen": null,
+          "afterClose": null
+        },
+        "customContentCallback": null
+      }
+    }
+  ]
+}
