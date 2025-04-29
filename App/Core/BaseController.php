@@ -40,6 +40,6 @@ abstract class BaseController
      */
     protected function isLoggedIn(): bool
     {
-        return Session::isLoggedIn();
+        return isLoggedIn();
     }
 }

@@ -1,7 +1,13 @@
 <?php
 namespace App\Models;
+
 use App\Core\Database;
 use PDO;
+use function App\Helpers\sanitize;
+use function App\Helpers\sanitize_email;
+use function App\Helpers\sanitize_username;
+use function App\Helpers\sanitize_numeric;
+
 class User {
     private $pdo;
     private $table = 'users';
@@ -12,9 +18,6 @@ class User {
         $this->ensureTableExists();
     }
 
-    /**
-     * Ensure the users table exists in the database.
-     */
     private function ensureTableExists() {
         $sql = "CREATE TABLE IF NOT EXISTS {$this->table} (
             id INT(11) AUTO_INCREMENT PRIMARY KEY,
@@ -35,20 +38,15 @@ class User {
         $this->pdo->exec($sql);
     }
 
-    /**
-     * Store a new user in the database.
-     *
-     * @return bool True on success, false on failure.
-     */
-    public function store() {
+    public function store(): bool {
         $query = "INSERT INTO {$this->table} (firstname, lastname, phone, email, img, username, role, main_job, password, birthdate, gender)
                   VALUES (:firstname, :lastname, :phone, :email, :img, :username, :role, :main_job, :password, :birthdate, :gender)";
         
         $stmt = $this->pdo->prepare($query);
-
+    
         $this->sanitizeData();
         $hashedPassword = password_hash($this->password, PASSWORD_BCRYPT);
-
+    
         $stmt->bindParam(":firstname", $this->firstname);
         $stmt->bindParam(":lastname", $this->lastname);
         $stmt->bindParam(":phone", $this->phone);
@@ -60,15 +58,17 @@ class User {
         $stmt->bindParam(":password", $hashedPassword);
         $stmt->bindParam(":birthdate", $this->birthdate);
         $stmt->bindParam(":gender", $this->gender);
-
-        return $stmt->execute();
+    
+        $success = $stmt->execute();
+    
+        if ($success) {
+            $this->id = (int) $this->pdo->lastInsertId();  // 🔥 This fixes the problem
+        }
+    
+        return $success;
     }
+    
 
-    /**
-     * Fetch a user by ID.
-     *
-     * @return object|false The user object or false if not found.
-     */
     public function fetchUserById() {
         $query = "SELECT * FROM {$this->table} WHERE id = :id";
         $stmt = $this->pdo->prepare($query);
@@ -79,25 +79,15 @@ class User {
 
     public function fetchAllUsers(){
         $query = "SELECT * FROM ".$this->table;
-        $stmt=$this->pdo->prepare($query);
+        $stmt = $this->pdo->prepare($query);
         $stmt->execute();
-        $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
-        if($result){
-            return $result;
-        }else{
-            return false;
-        }
+        return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: false;
     }
 
-    /**
-     * Authenticate a user.
-     *
-     * @return bool True if authentication succeeds, false otherwise.
-     */
     public function login() {
         $query = "SELECT * FROM {$this->table} WHERE email = :email OR username = :email";
         $stmt = $this->pdo->prepare($query);
-        $email = sanitize($this->email);
+        $email = sanitize_email($this->email);
 
         $stmt->bindParam(":email", $email);
         $stmt->execute();
@@ -110,29 +100,19 @@ class User {
         return false;
     }
 
-    /**
-     * Sanitize user data.
-     */
     private function sanitizeData() {
         $this->firstname = sanitize($this->firstname);
         $this->lastname = sanitize($this->lastname);
-        $this->username = sanitize($this->username);
-        $this->phone = sanitize($this->phone);
+        $this->username = sanitize_username($this->username);
+        $this->phone = sanitize_numeric($this->phone);
         $this->role = sanitize($this->role);
         $this->main_job = sanitize($this->main_job);
         $this->birthdate = sanitize($this->birthdate);
-        $this->email = sanitize($this->email);
+        $this->email = sanitize_email($this->email);
         $this->gender = sanitize($this->gender);
         $this->img = sanitize($this->img);
     }
 
-
-
-    /**
-     * Map database user data to object properties.
-     *
-     * @param object $dbUser The user data from the database.
-     */
     public function fill(array|object $data): void
     {
         foreach ((array) $data as $key => $value) {
@@ -141,6 +121,4 @@ class User {
             }
         }
     }
-    
-    
 }

@@ -44,7 +44,7 @@ class Route {
         $route = self::$nameRoutes[$name];
 
         foreach ($params as $key => $value) {
-            $route = str_replace('{' . $key . '}', $value, $route);
+            $route = str_replace('{' . $key . '}', (string)$value, $route);
         }
 
         return $route;

@@ -1,7 +1,6 @@
 <?php
-include __DIR__.'/arrays.php';
+include __DIR__.'/sequrity_helpers.php';
 use App\Core\Route;
-use App\FileServices\UploadService;
 function base_url($path = '') {
     if (defined('BASE_URL')) {
         return rtrim(BASE_URL, '/') . '/' . ltrim($path, '/');
