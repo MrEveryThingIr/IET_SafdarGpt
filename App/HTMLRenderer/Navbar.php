@@ -10,11 +10,11 @@ class Navbar implements RenderableInterface
     public function __construct(array $config = [])
     {
         $this->config = array_merge([
-            'brand'        => 'MyApp',
-            'items'        => [], // e.g. [ ['label' => 'Home', 'href' => '/'] ]
-            'stylesPaths'  => [],
-            'scriptsPaths' => [],
-            'template'     => 'templates/navbar_template',
+            'brand'         => 'MyApp',
+            'items'         => [],
+            'stylesPaths'   => [],
+            'scriptHelpers' => [],
+            'template'      => 'templates/navbar_template',
         ], $config);
     }
 
@@ -42,8 +42,8 @@ class Navbar implements RenderableInterface
         return $this->config['stylesPaths'];
     }
 
-    public function getScriptsPaths(): array
+    public function getScriptHelpers(): array
     {
-        return $this->config['scriptsPaths'];
+        return $this->config['scriptHelpers'];
     }
 }

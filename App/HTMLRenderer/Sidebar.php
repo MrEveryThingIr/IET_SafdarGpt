@@ -10,10 +10,10 @@ class Sidebar implements RenderableInterface
     public function __construct(array $config = [])
     {
         $this->config = array_merge([
-            'items'        => [], // e.g. [ ['label'=>'Dashboard','href'=>'/dashboard'] ]
-            'stylesPaths'  => [],
-            'scriptsPaths' => [],
-            'template'     => 'templates/sidebar_template',
+            'items'         => [],
+            'stylesPaths'   => [],
+            'scriptHelpers' => [],
+            'template'      => 'templates/sidebar_template',
         ], $config);
     }
 
@@ -41,8 +41,8 @@ class Sidebar implements RenderableInterface
         return $this->config['stylesPaths'];
     }
 
-    public function getScriptsPaths(): array
+    public function getScriptHelpers(): array
     {
-        return $this->config['scriptsPaths'];
+        return $this->config['scriptHelpers'];
     }
 }

@@ -4,42 +4,39 @@ declare(strict_types=1);
 namespace App\Core;
 
 use App\HTMLRenderer\Layout;
-use App\Helpers\Url;
-use App\Helpers\Session;
 
 abstract class BaseController
 {
-    /**
-     * @var Layout  The chrome (navbar + sidebar + template) to wrap every page.
-     */
-   
     protected Layout $layout;
 
     public function __construct()
     {
-        // You might want to inject dependencies instead of hardcoding this.
-        $this->layout = new Layout(); // Or inject Navbar/Sidebar if needed
-    }
-    /**
-     * Render any view by delegating to the Layout instance.
-     *
-     * @param string $view    e.g. 'developer_graphical_interface/create_form'
-     * @param array  $data    Variables the view expects
-     */
-    protected function render(string $view, array $data = []): void
-    {
-        // Layout::render expects ['view'=>..., 'viewData'=>...]
-        echo $this->layout->render([
-            'view'     => $view,
-            'viewData' => $data,
-        ]);
+        $this->layout = new Layout(); // Default, override in child if needed
     }
 
     /**
-     * Are we logged in?
+     * Render a view using the configured Layout.
+     *
+     * @param string $view          View path like 'module/page'
+     * @param array  $viewData      Variables passed to the view
+     * @param array  $scriptHelpers Optional script helper keywords
      */
+    protected function render(string $view, array $viewData = [], array $scriptHelpers = []): void
+    {
+        $mergedHelpers = array_unique(array_merge(
+            $this->layout->getScriptHelpers(),
+            $scriptHelpers
+        ));
+
+        echo $this->layout->render([
+            'view'           => $view,
+            'viewData'       => $viewData,
+            'scriptHelpers'  => $mergedHelpers,
+        ]);
+    }
+
     protected function isLoggedIn(): bool
     {
-        return isLoggedIn();
+        return isLoggedIn(); // Assumes global helper or override as needed
     }
 }

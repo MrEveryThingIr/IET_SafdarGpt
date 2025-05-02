@@ -21,9 +21,16 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
-<?php foreach ($scriptsPaths ?? [] as $jsPath): ?>
-    <script type="module" src="<?= base_url($jsPath) ?>"></script>
-<?php endforeach; ?>
+
+<script type="module">
+  import { orchestrate } from '/assets/js/orchestrator.js';
+  window.addEventListener('DOMContentLoaded', () => {
+    orchestrate(<?= json_encode($scriptHelpers ?? []) ?>);
+  });
+</script>
+
+
+
 
 
 </body>

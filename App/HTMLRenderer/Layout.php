@@ -13,24 +13,31 @@ class Layout implements RenderableInterface
 
     public function __construct(?Navbar $navbar = null, ?Sidebar $sidebar = null, array $config = [])
     {
-        $this->navbar = $navbar;
+        $this->navbar  = $navbar;
         $this->sidebar = $sidebar;
-        $this->config = array_merge([
-            'title'        => 'My Website',
-            'stylesPaths'  => [],
-            'scriptsPaths' => [],
-            'template'     => 'layouts/main_layout',
+        $this->config  = array_merge([
+            'title'         => 'My Website',
+            'stylesPaths'   => [],
+            'scriptHelpers' => [],
+            'template'      => 'layouts/main_layout',
         ], $config);
+    }
+
+    public function getScriptHelpers(): array
+    {
+        return $this->config['scriptHelpers'] ?? [];
     }
 
     public function render(array $data = []): string
     {
-        $view     = $data['view']     ?? '';
+        $view     = $data['view'] ?? '';
         $viewData = $data['viewData'] ?? [];
 
-        $content = $this->renderPartialWithFallback($view, $viewData);
-        $navbarHtml  = $this->navbar?->render() ?? '';
-        $sidebarHtml = $this->sidebar?->render() ?? '';
+        $scriptHelpers = $data['scriptHelpers'] ?? $this->config['scriptHelpers'];
+
+        $content      = $this->renderPartialWithFallback($view, $viewData);
+        $navbarHtml   = $this->navbar?->render() ?? '';
+        $sidebarHtml  = $this->sidebar?->render() ?? '';
 
         $styles = array_unique(array_merge(
             $this->config['stylesPaths'],
@@ -38,26 +45,19 @@ class Layout implements RenderableInterface
             $this->sidebar?->getStylesPaths() ?? []
         ));
 
-        $scripts = array_unique(array_merge(
-            $this->config['scriptsPaths'],
-            $this->navbar?->getScriptsPaths() ?? [],
-            $this->sidebar?->getScriptsPaths() ?? []
-        ));
-
         $layoutPath = views_path($this->config['template'] . '.php');
-
         if (!file_exists($layoutPath)) {
             throw new RuntimeException("Layout template not found: " . $layoutPath);
         }
 
         ob_start();
         extract([
-            'title'        => $this->config['title'],
-            'stylesPaths'  => $styles,
-            'scriptsPaths' => $scripts,
-            'navbarHtml'   => $navbarHtml,
-            'sidebarHtml'  => $sidebarHtml,
-            'content'      => $content,
+            'title'         => $this->config['title'],
+            'stylesPaths'   => $styles,
+            'scriptHelpers' => $scriptHelpers,
+            'navbarHtml'    => $navbarHtml,
+            'sidebarHtml'   => $sidebarHtml,
+            'content'       => $content,
         ]);
         include $layoutPath;
         return ob_get_clean();
@@ -66,11 +66,10 @@ class Layout implements RenderableInterface
     private function renderPartialWithFallback(string $view, array $viewData = []): string
     {
         $path = views_path($view . '.php');
-
         if (!file_exists($path)) {
             return "<div style='padding:1em;background:#fdd;color:#900'>"
-                 . "<strong>❌ View not found:</strong><br><code>{$path}</code>"
-                 . "</div>";
+                . "<strong>❌ View not found:</strong><br><code>{$path}</code>"
+                . "</div>";
         }
 
         ob_start();

@@ -9,13 +9,6 @@ use App\Models\User;
 use App\Helpers\UploadFile;
 use App\HTMLRenderer\Navbar;
 use App\HTMLRenderer\Sidebar;
-
-// use function App\Helpers\sanitize;
-// use function App\Helpers\sanitize_email;
-// use function App\Helpers\redirect;
-// use function App\Helpers\isLoggedIn;
-// use function App\Helpers\route;
-
 class AuthController extends BaseController
 {
 
@@ -24,7 +17,7 @@ class AuthController extends BaseController
     }
     public function showRegisterForm(): void
     {
-        echo $this->render('auth/register');
+        echo $this->render('auth/register',[]);
     }
 
     public function register(): void
@@ -65,7 +58,7 @@ class AuthController extends BaseController
 
         if ($user->login()) {
             $_SESSION['user_id'] = $user->id;
-            redirect(route('ietdashboard'));
+            redirect(route('dashboard'));
         } else {
             echo "Login failed.";
         }
@@ -77,64 +70,8 @@ class AuthController extends BaseController
         redirect(route('auth.login'));
     }
 
-    public function dashboard(): void
-    {
-        if (!isLoggedIn()) {
-            echo 'isnotloggedin';
-            // redirect(route('auth.login'));
-            // $this->logout();
-        }
-    
-        $userModel = new User();
-        $userModel->id = $_SESSION['user_id'];
-        $user = $userModel->fetchUserById();
-    
-        $this->layout = new Layout(
-            new Navbar([
-                'brand' => 'IET_Post',
-                'items' => [
-                    ['label' => 'Dashboard', 'href' => route('ietdashboard')],
-                    ['label' => 'Profile', 'href' => '#'],
-                    ['label' => 'Logout', 'href' => route('auth.logout')]
-                ],
-                'stylesPaths' => [
-                    '/assets/css/navbar.css'
-                ],
-                'scriptsPaths' => [
-                    '/assets/js/navbar.js'
-                ]
-            ]),
-            new Sidebar([
-                'items' => [
-                    ['label' => 'Create Post', 'href' => route('ietpost.create')],
-                    ['label' => 'My Posts', 'href' => route('ietpost.my')],
-                    ['label' => 'Archived', 'href' => route('ietpost.archived')],
-                    ['label' => 'All Posts', 'href' => route('ietpost.all')],
-                    ['label' => 'Meetings', 'href' => route('ietmeeting.create')],
-                ],
-                'stylesPaths' => [
-                    '/assets/css/sidebar.css'
-                ],
-                'scriptsPaths' => [
-                    '/assets/js/sidebar.js'
-                ]
-            ]),
-            [
-                'title' => 'User Dashboard',
-                'stylesPaths' => [
-                    '/assets/css/dashboard.css'
-                ],
-                'scriptsPaths' => [
-                    '/assets/js/dashboard.js'
-                ],
-                'template' => 'layouts/main_layout'
-            ]
-        );
-    
-        echo $this->layout->render([
-            'view' => 'auth/dashboard',
-            'viewData' => ['user' => $user]
-        ]);
+    public function dashboard(){
+        
     }
     
 }
