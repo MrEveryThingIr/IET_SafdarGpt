@@ -6,9 +6,9 @@
  * @param {Object} [options]
  * @param {boolean} [options.clearOnChange=true]
  */
-// filePreviewer.js - Updated version
+// filePreviewer.js – corrected version
 export function initMediaPreviewer(inputSelector, previewSelector, options = {}) {
-  const input = document.querySelector(inputSelector);
+  const input     = document.querySelector(inputSelector);
   const container = document.querySelector(previewSelector);
   const clearOnChange = options.clearOnChange !== false;
 
@@ -17,29 +17,33 @@ export function initMediaPreviewer(inputSelector, previewSelector, options = {})
     return;
   }
 
-  // Add multiple attribute if not present
+  // 1) Ensure `multiple`
   if (!input.hasAttribute('multiple')) {
     input.setAttribute('multiple', '');
   }
 
-  input.addEventListener('change', (e) => {
+  // 2) Ensure `name` ends with []
+  const nameAttr = input.getAttribute('name') || '';
+  if (!nameAttr.endsWith('[]')) {
+    const base = nameAttr.replace(/\[\]$/, '');
+    input.setAttribute('name', base + '[]');
+  }
+
+  input.addEventListener('change', () => {
     if (clearOnChange) container.innerHTML = '';
-    
-    // Verify files are available in the input
-    console.log('Files selected:', e.target.files); 
-    
-    Array.from(input.files).slice(0, 5).forEach(file => { // Limit to 5 files
+
+    Array.from(input.files).forEach(file => {
       const reader = new FileReader();
-      reader.onload = function (e) {
+      reader.onload = ({ target }) => {
         const wrapper = document.createElement('div');
-        wrapper.className = 'border rounded overflow-hidden w-32 h-32 relative';
+        wrapper.className = 'border rounded overflow-hidden w-32 h-32 relative m-1';
 
         if (file.type.startsWith('image/')) {
-          wrapper.innerHTML = `<img src="${e.target.result}" class="object-cover w-full h-full">`;
+          wrapper.innerHTML = `<img src="${target.result}" class="object-cover w-full h-full">`;
         } else if (file.type.startsWith('video/')) {
-          wrapper.innerHTML = `<video src="${e.target.result}" controls class="object-cover w-full h-full"></video>`;
+          wrapper.innerHTML = `<video src="${target.result}" controls class="object-cover w-full h-full"></video>`;
         } else {
-          wrapper.innerHTML = `<p class="text-xs text-gray-600">${file.name}</p>`;
+          wrapper.innerHTML = `<p class="text-xs text-gray-600 p-2 break-all">${file.name}</p>`;
         }
 
         container.appendChild(wrapper);
@@ -48,6 +52,7 @@ export function initMediaPreviewer(inputSelector, previewSelector, options = {})
     });
   });
 }
+
 
 
 /**

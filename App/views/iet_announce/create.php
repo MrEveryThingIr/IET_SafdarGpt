@@ -69,13 +69,9 @@
   <!-- فایل ضمیمه -->
   <div>
   <label for="media_upload" class="block text-sm font-medium text-gray-700 mb-1">فایل‌های ضمیمه</label>
-  <input type="file" name="media_uploads[]" id="media_upload" accept="image/*,video/*" multiple
-         class="w-full border border-dashed border-gray-400 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
-
-  <p class="text-xs text-gray-500 mt-1">حداکثر ۵ عکس یا ویدیو</p>
-
-  <!-- Preview Container -->
-  <div id="media_preview" class="mt-4 flex flex-wrap gap-4"></div>
+  <label for="media_uploads">Upload media:</label>
+  <input type="file" name="media_uploads[]" id="mediaUploaderInput" multiple />
+  <div id="uploadedMediaList"></div>
 </div>
 
   <!-- دکمه ثبت -->
