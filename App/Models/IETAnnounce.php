@@ -60,4 +60,43 @@ class IETAnnounce extends BaseModel
         $stmt->execute([$userId]);
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
+
+    public function specified($supply_demand = '', $keywords = [],$goods_services='') {
+        $conditions = [];
+        $params = [];
+
+        if ($goods_services != '') {
+            $conditions[] = "goods_services = :goods_services";
+            $params[':goods_services'] = $goods_services;
+        }
+        
+        if ($supply_demand != '') {
+            $conditions[] = "supply_demand = :supply_demand";
+            $params[':supply_demand'] = $supply_demand;
+        }
+        
+        if (!empty($keywords)) {
+            $categoryConditions = [];
+            foreach ($keywords as $key => $keyword) {
+                $paramName = ":keyword_" . $key;
+                $categoryConditions[] = "category LIKE " . $paramName;
+                $params[$paramName] = "%" . $keyword . "%";
+            }
+            $conditions[] = "(" . implode(" OR ", $categoryConditions) . ")";
+        }
+        
+        if (empty($conditions)) {
+            // No conditions, select all
+            $stmt = $this->db->query("SELECT * FROM " . $this->table);
+        } else {
+            $sql = "SELECT * FROM " . $this->table . " WHERE " . implode(" AND ", $conditions);
+            $stmt = $this->db->prepare($sql);
+            foreach ($params as $key => $value) {
+                $stmt->bindValue($key, $value);
+            }
+        }
+        
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
 }
