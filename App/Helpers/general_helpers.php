@@ -1,7 +1,19 @@
 <?php
-include __DIR__.'/sequrity_helpers.php';
+// Safely load helpers
+$helperFiles = [
+    __DIR__.'/security/security_helpers.php',
+    __DIR__.'/security/csrf_helpers.php'
+];
+
+foreach ($helperFiles as $file) {
+    if (!file_exists($file)) {
+        throw new RuntimeException("Helper file missing: {$file}");
+    }
+    require_once $file;
+}
+
 use App\Core\Route;
-use App\Helpers\MenuItemBuilder;
+
 function base_url($path = '') {
     if (defined('BASE_URL')) {
         return rtrim(BASE_URL, '/') . '/' . ltrim($path, '/');
@@ -100,4 +112,15 @@ function inputField(string $name, string $label, string $type = 'text', array $a
 
     $html .= '</div>';
     return $html;
+}
+use App\Models\User;
+function currentUser(){
+    
+    if(isLoggedIn()){
+        $user=new User();
+        $user->id=$_SESSION['user_id'];
+        return $user->fetchUserById();
+    }else{
+        redirect('auth.login');
+    }
 }

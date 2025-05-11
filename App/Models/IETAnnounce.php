@@ -22,9 +22,14 @@ class IETAnnounce extends BaseModel
             location_limit VARCHAR(255),
             media_paths TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            CONSTRAINT fk_user
+                FOREIGN KEY (user_id) 
+                REFERENCES users(id)
+                ON DELETE CASCADE
+                ON UPDATE CASCADE
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
-
+    
         $this->db->exec($sql);
     }
 

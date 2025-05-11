@@ -18,6 +18,7 @@ class Layout implements RenderableInterface
         $this->config  = array_merge([
             'title'         => 'My Website',
             'stylesPaths'   => [],
+            'scriptsPaths'   => [],
             'scriptHelpers' => [],
             'template'      => 'layouts/main_layout',
         ], $config);

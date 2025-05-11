@@ -123,4 +123,28 @@ final class UploadFile
         }
         return $dir;
     }
+
+    public static function upload(
+        string $subfolder, 
+        string $category, 
+        array $allowedTypes = [], 
+        int $maxSize = 10 * 1024 * 1024
+    ): array {
+        if (!isset($_FILES['file'])) {
+            return [
+                'success' => false,
+                'error'   => 'No file was uploaded.'
+            ];
+        }
+    
+        // Combine the subfolder with the category for final upload path
+        $uploadPath = $subfolder . '/' . $category;
+        
+        return self::uploadFromArray(
+            $category,
+            $_FILES['file'],
+            $allowedTypes,
+            $maxSize
+        );
+    }
 }

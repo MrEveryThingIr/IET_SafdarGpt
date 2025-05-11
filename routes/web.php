@@ -4,13 +4,14 @@ use App\Models\IETAnnounce;
 
 Route::get('/','AuthController@home')->name('iethome');
 // users
+Route::get('/user/profile/{feature}','ProfileController@center')->name('user.profile');
 Route::get('/auth/register', 'AuthController@showRegisterForm')->name('auth.register');
 Route::post('/auth/register', 'AuthController@register');
 
 Route::get('/auth/login', 'AuthController@showLoginForm')->name('auth.login');
 Route::post('/auth/login', 'AuthController@login')->name('auth.login.post');
 
-Route::get('/auth/logout', 'AuthController@logout')->name('auth.logout');
+Route::post('/auth/logout', 'AuthController@logout')->name('auth.logout');
 Route::get('/dashboard', 'AuthController@dashboard')->name('dashboard');
 
 // IETAnnounces
@@ -23,4 +24,13 @@ Route::get('/ietannounce/edit/{id}', 'IETAnnounceController@edit')->name('ietann
 Route::post('/ietannounce/update/{id}', 'IETAnnounceController@update')->name('ietannounce.update');
 Route::post('/ietannounce/delete/{id}', 'IETAnnounceController@delete')->name('ietannounce.delete');
 // Optional for admin/overview
-Route::get('/ietannounce/all', 'IETAnnounceController@all')->name('ietannounce.all'); 
+Route::get('/ietannounce/all', 'AuthController@all')->name('ietannounce.all'); 
+
+
+// CommentsOnAnnounces
+Route::get('/ietannounce/{announce_id}/add_comment', 'IETAnnounceCommentController@addCommentOnAnnounce')->name('ietannounce.add_comment'); 
+Route::post('/ietannounce/{announce_id}/store_comment', 'IETAnnounceCommentController@storeComment')->name('ietannounce.store_comment'); 
+
+
+// contracts
+Route::get('/contracts/create', 'ContractController@createContract')->name('ietannounce.createForm'); 

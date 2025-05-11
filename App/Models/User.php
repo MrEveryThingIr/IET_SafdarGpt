@@ -2,10 +2,6 @@
 namespace App\Models;
 
 use App\Core\BaseModel;
-use function App\Helpers\sanitize;
-use function App\Helpers\sanitize_email;
-use function App\Helpers\sanitize_username;
-use function App\Helpers\sanitize_numeric;
 
 class User extends BaseModel {
     protected string $table = 'users';
@@ -77,6 +73,25 @@ class User extends BaseModel {
             if (property_exists($this, $key)) {
                 $this->$key = $value;
             }
+        }
+    }
+
+    public function getUserAge($userId) {
+        try {
+            $stmt = $this->db->prepare('SELECT 
+                TIMESTAMPDIFF(YEAR, birthdate, CURDATE()) AS age 
+                FROM '.$this->table.' 
+                WHERE id = :id');
+            
+            $stmt->bindParam(':id', $userId, \PDO::PARAM_INT);
+            $stmt->execute();
+            
+            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+            
+            return $result['age'] ?? null;
+        } catch (\PDOException $e) {
+            error_log("Error getting user age: " . $e->getMessage());
+            return null;
         }
     }
 }

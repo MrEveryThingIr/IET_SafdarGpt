@@ -18,7 +18,18 @@ const helperRegistry = {
       module: '/assets/js/helpers/mediaUploader.js',
       method: 'initMediaUploader',
       args: ['#mediaUploaderInput', '#uploadedMediaList', { accept: ['image/*', 'video/*', 'audio/*'], multiple: true }]
-    }
+    },
+
+    modal: {
+      module: '/assets/js/helpers/modalHelper.js',
+      method: 'initAuthModal',
+      args: ['#commentTrigger', '#commentModal', {
+          loginRoute: '/login',
+          hiddenClass: 'hidden',
+          visibleClass: 'block',
+          closeSelector: '.close'
+      }]
+  },
   };
   
   export default helperRegistry;

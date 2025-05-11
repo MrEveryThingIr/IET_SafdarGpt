@@ -1,6 +1,6 @@
 <?php
 /**
- * File: App\Helpers\sequrity_helpers.php
+ * File: App\Helpers\security_helpers.php
  * Description: Centralized security and sanitization helpers for all user input.
  * Author: IET System
  *
@@ -9,7 +9,7 @@
  * ✅ Designed to eliminate common security flaws like XSS, injection, or malformed input.
  */
 
-namespace App\Helpers;
+
 
 /**
  * General purpose string sanitizer.

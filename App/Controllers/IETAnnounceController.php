@@ -7,7 +7,9 @@ use App\HTMLRenderer\Navbar;
 use App\HTMLRenderer\Sidebar;
 use App\HTMLRenderer\Layout;
 use App\Models\IETAnnounce;
+use App\Models\IETAnnounceComment;
 use App\Helpers\UploadFile;
+use App\Models\User;
 use Exception;
 class IETAnnounceController extends BaseController
 {
@@ -19,7 +21,14 @@ class IETAnnounceController extends BaseController
             'brand' => 'IET System',
             'items' => [
                 ['label' => 'پروفایل', 'href' => '#'],
-                ['label' => 'خروج', 'href' => '#'],
+                  // Logout form item
+        [
+            'label' => 'خروج',
+            'form' => true, // Flag to indicate this is a form
+            'action' => route('auth.logout'),
+            'class' => 'bg-green-700 m-1 text-white text-lg font-semibold rounded-md p-2',
+            'method' => 'POST'
+        ],
             ]
         ]);
 
@@ -45,11 +54,7 @@ class IETAnnounceController extends BaseController
         $this->render('iet_announce/create', [], ['categories', 'mediaUploader']);
     }
     
-    public function all(){
-        // $keywords=explode('-',$keywords);
-        $all=$this->announceModel->specified('',[''],'');
-        $this->render('iet_announce/all',['announces'=>$all],[]);
-    }
+
 
     public function store(): void
 {    
@@ -179,6 +184,9 @@ class IETAnnounceController extends BaseController
 
     public function show(int $id): void
     {
+        $comments=new IETAnnounceComment();
+        $announce_comments=$comments->getByAnnounceId($id);
+        // $commentor=$comments->fetchCommentor();
         /** @var array|null $announce */
         $announce = $this->announceModel->find($id);
         if (!$announce) {
@@ -186,7 +194,7 @@ class IETAnnounceController extends BaseController
             return;
         }
 
-        $this->render('iet_announce/show', ['announce' => $announce]);
+        $this->render('iet_announce/show', ['announce' => $announce,'comments'=>$announce_comments]);
     }
 
     public function edit(int $id): void

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <title><?= htmlspecialchars($title ?? 'IET Interface') ?></title>
@@ -21,14 +21,27 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
-
-<script type="module">
-  import { orchestrate } from '/assets/js/orchestrator.js';
-  window.addEventListener('DOMContentLoaded', () => {
-    orchestrate(<?= json_encode($scriptHelpers ?? []) ?>);
-  });
+<!-- In your main_layout.php -->
+<script>
+    // Global auth state check
+    window._AUTH_STATE = {
+        isLoggedIn: <?= isLoggedIn() ? 'true' : 'false' ?>,
+        loginRoute: '<?= route('auth.login') ?>' // Add route here
+    };
 </script>
 
+<?php foreach($scriptHelpers ?? [] as $helper): ?>
+  <script type="module" src="<?= base_url('assets/js/helpers/'.$helper.'.js') ?>"></script>
+<?php endforeach; ?>
+
+<script type="module">
+  import modalHelper from '/assets/js/helpers/modalHelper.js';
+  modalHelper('#commentTrigger-<?= $announce['id']?>', '#commentModal-<?= $announce['id']?>', {
+    
+    hiddenClass: 'hidden',
+    visibleClass: 'block'
+  });
+</script>
 
 
 
