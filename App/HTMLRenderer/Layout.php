@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\HTMLRenderer;
 
+use App\Helpers\JsonApi;
 use RuntimeException;
 
 class Layout implements RenderableInterface
@@ -19,7 +20,7 @@ class Layout implements RenderableInterface
             'title'         => 'My Website',
             'stylesPaths'   => [],
             'scriptsPaths'   => [],
-            'scriptHelpers' => [],
+            'scriptHelpers' => [['name'=>'','needed_configs'=>[]]],
             'template'      => 'layouts/main_layout',
         ], $config);
     }
@@ -29,6 +30,10 @@ class Layout implements RenderableInterface
         return $this->config['scriptHelpers'] ?? [];
     }
 
+    // public function sendJsConfigsViaJsonApi($js_config){
+    //     $jsonapi=new JsonApi();
+    //     $jsonapi->send($js_config);
+    // }
     public function render(array $data = []): string
     {
         $view     = $data['view'] ?? '';

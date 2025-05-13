@@ -20,18 +20,18 @@ class ProfileController extends BaseController
             'scriptHelpers' => [] // method-level override
         ]);
     }
-    public function center($feature){
+    public function center($feature,$user_id=1){
         $data=[];
         
         switch ($feature){
             case 'identification':
                 $user=new User();
-                $user->id=1;
+                $user->id=$user_id;
                 $data['user_info']=$user->fetchUserById();
                 $data['userAge']=$user->getUserAge(1);
                 break;
             case 'my_announces':
-                $data=(new IETAnnounce())->getByUser(1);
+                $data=(new IETAnnounce())->getByUser($user_id);
                 break;
             case 'education_and_honors':
                 $data=[];

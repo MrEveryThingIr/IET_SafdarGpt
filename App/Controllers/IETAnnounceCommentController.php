@@ -20,8 +20,13 @@ class IETAnnounceCommentController extends BaseController
     }
 
     public function storeComment($announce_id){
-        $comment=clean('text',$_POST['comment_on_announce']);
+        $comment= nl2br(htmlspecialchars(trim($_POST['comment_on_announce'] ?? ''), ENT_QUOTES, 'UTF-8'));
         $data=['announce_id'=>$announce_id,'commentor_id'=>1,'comment'=>$comment];
-        $this->commentModel->create($data);
+        if($this->commentModel->create($data)){
+            $_SESSION['success']='کامنت افزوده شد';
+        }else{
+            $_SESSION['error']='کامنت ارسال نشد';
+        };
+        redirect(route('ietannounce.show',['id'=>$announce_id]));
     }
 }

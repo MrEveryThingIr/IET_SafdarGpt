@@ -15,80 +15,97 @@ class AuthController extends BaseController
 {
     public function __construct(){
         // Prepare items array based on authentication status
-$items = [
-    [
-        'label' => 'معرفی',
-        'href' => route('iethome'),
-        'class' => 'bg-green-700 m-1 text-white text-lg font-semibold rounded-md p-2 hover:bg-green-800 transition-colors'
-    ],
-    [
-        'label' => 'اعلام‌ها',
-        'href' => route('ietannounce.all'),
-        'class' => 'bg-green-700 m-1 text-white text-lg font-semibold rounded-md p-2 hover:bg-green-800 transition-colors'
-    ],
- 
-];
-
-// Add conditional items based on login status
-if (!isLoggedIn()) {
-    array_unshift($items, [
-        'label' => 'عضویت',
-        'href' => route('auth.register'),
-        'class' => 'text-gray-700 hover:text-blue-600 px-4 py-2 text-lg font-medium'
-    ]);
-    array_unshift($items, [
-        'label' => 'وارد شوید',
-        'href' => route('auth.login'),
-        'class' => 'bg-green-700 m-1 text-white text-lg font-semibold rounded-md p-2 hover:bg-green-800 transition-colors'
-    ]);
-} else {
-   
-    // Get current user data (example - adjust according to your user system)
-    $user =currentUser();
-    
-// User profile item - corrected version
-array_unshift($items, 
-    [
-    'label' => $user['firstname'] . ' ' . $user['lastname'],
-    'href' => route('user.profile',['feature'=>'identification']),
-    'class' => 'flex items-center gap-2 text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium',
-    'icon' => '<img src="' . $user['img'] . '" class="w-8 h-8 rounded-full object-cover">',
-],
-    
-[
-    'label' => 'خروج',
-    'form' => true, // Flag to indicate this is a form
-    'action' => route('auth.logout'),
-    'class' => 'bg-green-700 m-1 text-white text-lg font-semibold rounded-md p-2',
-    'method' => 'POST'
-],
-);
-}
-
-// Initialize navbar
-$navbar = new Navbar([
-    'brand' => [
-        'label' => 'IET System',
-        'href' => route('iethome'),
-        'class' => 'text-2xl font-bold text-gray-800 hover:text-blue-600'
-    ],
-    'items' => $items
-]);
-        $this->layout = new Layout($navbar, $sidebar=null, [
+        $items = [
+            [
+                'label' => 'معرفی',
+                'href' => route('iethome'),
+                'class' => 'm-1 px-4 py-2 bg-green-700 text-white text-lg font-semibold rounded-md hover:bg-green-800 transition-colors'
+            ],
+            [
+                'label' => 'اعلام‌ها',
+                'href' => route('ietannounce.all',['sd'=>'sd']),
+                'class' => 'm-1 px-4 py-2 bg-green-700 text-white text-lg font-semibold rounded-md hover:bg-green-800 transition-colors'
+            ],
+        ];
+        
+        if (!isLoggedIn()) {
+            array_unshift($items,
+                [
+                    'label' => 'عضویت',
+                    'href' => route('auth.register'),
+                    'class' => 'px-4 py-2 text-lg font-medium text-gray-700 hover:text-blue-600 transition-colors'
+                ],
+                [
+                    'label' => 'وارد شوید',
+                    'href' => route('auth.login'),
+                    'class' => 'm-1 px-4 py-2 bg-green-700 text-white text-lg font-semibold rounded-md hover:bg-green-800 transition-colors'
+                ]
+            );
+        } else {
+            $user = currentUser();
+        
+            array_unshift($items,
+                [
+                    'label' => $user['firstname'] . ' ' . $user['lastname'],
+                    'href' => route('user.profile', ['feature' => 'identification', 'user_id' => $user['id']]),
+                    'class' => 'flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors',
+                    'icon' => '<img src="' . $user['img'] . '" class="w-8 h-8 rounded-full object-cover">'
+                ],
+                [
+                    'label' => 'داشبورد',
+                    'href' => route('dashboard'),
+                    'class' => 'm-1 px-4 py-2 bg-green-700 text-white text-lg font-semibold rounded-md hover:bg-green-800 transition-colors'
+                ],
+                [
+                    'label' => 'خروج',
+                    'form' => true,
+                    'action' => route('auth.logout'),
+                    'method' => 'POST',
+                    'class' => 'm-1 px-4 py-2 bg-green-700 text-white text-lg font-semibold rounded-md hover:bg-green-800 transition-colors'
+                ]
+            );
+        }
+        
+        $navbar = new Navbar([
+            'brand' => [
+                'label' => 'IET System',
+                'href' => route('iethome'),
+                'class' => 'text-2xl font-bold text-gray-800 hover:text-blue-600'
+            ],
+            'items' => $items
+        ]);
+        
+        $this->layout = new Layout($navbar, $sidebar = null, [
             'title' => 'خانه',
             'template' => 'layouts/main_layout',
-            'scriptHelpers' => [] // method-level override
+            'scriptHelpers' => []
         ]);
-    }
-
+    }        
     public function all()
     {
+        // var_dump($_GET);
         $announceModel = new IETAnnounce();
-        $all = $announceModel->specified('', [''], '');
         
+        // Get filter parameters
+        $filters = [
+            'supply_demand' => $_GET['sd'] ?? [],
+            'goods_services' => $_GET['gs'] ?? '',
+            'keywords' => array_filter(explode(' ', $_GET['q'] ?? '')),
+            'category' => $_GET['category'] ?? ''
+        ];
+    
+        // Fetch filtered announcements
+        $all = $announceModel->specified(
+            $filters['supply_demand'],
+            $filters['keywords'],
+            $filters['goods_services'],
+            $filters['category']
+        );
+    
         $this->render('iet_announce/all', [
-            'announces' => $all
-        ], ['modalHelper']); // Just specify helper file name
+            'announces' => $all,
+            'filters' => $filters
+        ], ['modalHelper']);
     }
 
     public function home(){
@@ -229,33 +246,41 @@ $navbar = new Navbar([
         if(!isLoggedIn()){
             redirect(route('iethome'));
         }
+        $user=currentUser();
         $navbar=new Navbar([
             'brand'=>'IET System',
             'items'=>[
-                ['label'=>'پروفایل','href'=>route('user.profile',['feature'=>'identification']),'class'=>'bg-black m-1 text-white text-lg font-semibold rounded-md p-2'],
+                [
+                    'label' => $user['firstname'] . ' ' . $user['lastname'],
+                    'href' => route('user.profile',['feature'=>'identification','user_id'=>$user['id']]),
+                    'class' => 'flex items-center gap-2 text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium',
+                    'icon' => '<img src="' . $user['img'] . '" class="w-8 h-8 rounded-full object-cover">',
+                ],
+         
+                ['label'=>'خانه','href'=>route('iethome'),'class'=>'bg-green-700 m-1 text-white text-lg font-semibold rounded-md p-2'],
+                
                 [
                     'label' => 'خروج',
                     'form' => true, // Flag to indicate this is a form
                     'action' => route('auth.logout'),
                     'class' => 'bg-green-700 m-1 text-white text-lg font-semibold rounded-md p-2',
                     'method' => 'POST'
-                ],
-                ['label'=>'خانه','href'=>route('iethome'),'class'=>'bg-green-700 m-1 text-white text-lg font-semibold rounded-md p-2'],
-                // ['label'=>'اعلام ها','href'=>route('ietannounce.all'),'class'=>'bg-green-700 m-1 text-white text-lg font-semibold rounded-md p-2'],
-            
+                ],   
             ]
         ]);
         $sidebar=new Sidebar([
             'items'=>[
-                ['label'=>'افزودن اعلام جدید','href'=>route('ietannounce.create')]
-            ],
+                
+                    ['label'=>' افزودن اعلام','href'=>route('ietannounce.create')],
+                    ['label'=>'اعلامهای من','href'=>route('ietannounce.mine')],
+            ]
         ]);
         $this->layout = new Layout($navbar, $sidebar, [
             'title' => 'خانه',
             'template' => 'layouts/main_layout',
             'scriptHelpers' => [] // method-level override
         ]);
-        $this->render('auth/dashboard',[],[]);
+        $this->render('auth/dashboard',['user'=>$user],[]);
     }
     
 }

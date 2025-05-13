@@ -4,7 +4,7 @@ use App\Models\IETAnnounce;
 
 Route::get('/','AuthController@home')->name('iethome');
 // users
-Route::get('/user/profile/{feature}','ProfileController@center')->name('user.profile');
+Route::get('/user/{user_id}/profile/{feature}','ProfileController@center')->name('user.profile');
 Route::get('/auth/register', 'AuthController@showRegisterForm')->name('auth.register');
 Route::post('/auth/register', 'AuthController@register');
 

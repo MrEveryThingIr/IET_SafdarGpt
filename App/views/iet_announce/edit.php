@@ -37,6 +37,7 @@
 
 
     <button type="submit" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded mt-4">بروزرسانی</button>
+    <button class="bg-red-400 hover:bg-yellow-400 text-green-200 py-2 px-4 rounded mt-4" ><a href="<?php echo route('ietannounce.show',['id'=>$announce['id']]) ?>">انصراف</a></button>
   </form>
 </div>
 

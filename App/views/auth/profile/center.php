@@ -5,12 +5,12 @@ use App\HTMLRenderer\Sidebar;
         $navbar = new Navbar([
             'brand' => ['label'=>'IET System','href'=>route('iethome')],
             'items' => [
-                ['label' => 'مشخصات فردی', 'href' => route('user.profile',['feature'=>'identification']),'class'=>'bg-blue-600 m-2 hover:bg-blue-700 text-white px-4 py-2 rounded transition'],
+                ['label' => 'مشخصات فردی', 'href' => route('user.profile',['feature'=>'identification','user_id'=>currentUser()['id']]),'class'=>'bg-blue-600 m-2 hover:bg-blue-700 text-white px-4 py-2 rounded transition'],
                 ['label'=>'تحصیلات','href'=>"#",'class'=>'bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition'],
                 ['label' => 'مشخصات شغلی', 'href' => '#','class'=>'bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition'],
                 ['label' => 'مهارت های جانبی', 'href' => '#','class'=>'bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition'],
                 ['label' => 'نیازهای دوره ای', 'href' => '#','class'=>'bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition'],
-                ['label' => 'اعلام ها', 'href' => route('user.profile',['feature'=>'my_announces']),'class'=>'bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition'],
+                ['label' => 'اعلام ها', 'href' => route('user.profile',['feature'=>'my_announces','user_id'=>currentUser()['id']]),'class'=>'bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition'],
 
             ]
         ]);

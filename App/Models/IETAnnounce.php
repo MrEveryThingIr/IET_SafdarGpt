@@ -66,41 +66,59 @@ class IETAnnounce extends BaseModel
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    public function specified($supply_demand = '', $keywords = [],$goods_services='') {
+    public function specified($supply_demand = [], $keywords = [], $goods_services = '', $category = '') 
+    {
         $conditions = [];
         $params = [];
-
-        if ($goods_services != '') {
+    
+        // Filter by supply/demand
+        if (!empty($supply_demand)) {
+            $sdConditions = [];
+            foreach ((array)$supply_demand as $key => $value) {
+                $paramName = ":sd_" . $key;
+                $sdConditions[] = "supply_demand = " . $paramName;
+                $params[$paramName] = $value;
+            }
+            $conditions[] = "(" . implode(" OR ", $sdConditions) . ")";
+        }
+    
+        // Filter by goods/services
+        if (!empty($goods_services)) {
             $conditions[] = "goods_services = :goods_services";
             $params[':goods_services'] = $goods_services;
         }
-        
-        if ($supply_demand != '') {
-            $conditions[] = "supply_demand = :supply_demand";
-            $params[':supply_demand'] = $supply_demand;
-        }
-        
+    
+        // Search by keywords (title or description)
         if (!empty($keywords)) {
-            $categoryConditions = [];
+            $searchConditions = [];
             foreach ($keywords as $key => $keyword) {
-                $paramName = ":keyword_" . $key;
-                $categoryConditions[] = "category LIKE " . $paramName;
-                $params[$paramName] = "%" . $keyword . "%";
+                $paramTitle = ":keyword_title_" . $key;
+                $paramDesc = ":keyword_desc_" . $key;
+                $searchConditions[] = "(title LIKE " . $paramTitle . " OR description LIKE " . $paramDesc . ")";
+                $params[$paramTitle] = "%" . $keyword . "%";
+                $params[$paramDesc] = "%" . $keyword . "%";
             }
-            $conditions[] = "(" . implode(" OR ", $categoryConditions) . ")";
+            $conditions[] = "(" . implode(" AND ", $searchConditions) . ")";
         }
-        
-        if (empty($conditions)) {
-            // No conditions, select all
-            $stmt = $this->db->query("SELECT * FROM " . $this->table);
-        } else {
-            $sql = "SELECT * FROM " . $this->table . " WHERE " . implode(" AND ", $conditions);
-            $stmt = $this->db->prepare($sql);
-            foreach ($params as $key => $value) {
-                $stmt->bindValue($key, $value);
-            }
+    
+        // Filter by category
+        if (!empty($category)) {
+            $conditions[] = "category LIKE :category";
+            $params[':category'] = "%" . $category . "%";
         }
-        
+    
+        // Build the query
+        $sql = "SELECT * FROM " . $this->table;
+        if (!empty($conditions)) {
+            $sql .= " WHERE " . implode(" AND ", $conditions);
+        }
+        $sql .= " ORDER BY created_at DESC";
+    
+        $stmt = $this->db->prepare($sql);
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+    
         $stmt->execute();
         return $stmt->fetchAll();
     }

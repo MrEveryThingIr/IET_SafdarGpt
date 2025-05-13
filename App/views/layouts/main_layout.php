@@ -34,14 +34,7 @@
   <script type="module" src="<?= base_url('assets/js/helpers/'.$helper.'.js') ?>"></script>
 <?php endforeach; ?>
 
-<script type="module">
-  import modalHelper from '/assets/js/helpers/modalHelper.js';
-  modalHelper('#commentTrigger-<?= $announce['id']?>', '#commentModal-<?= $announce['id']?>', {
-    
-    hiddenClass: 'hidden',
-    visibleClass: 'block'
-  });
-</script>
+
 
 
 

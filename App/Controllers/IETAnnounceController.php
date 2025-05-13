@@ -20,7 +20,8 @@ class IETAnnounceController extends BaseController
         $navbar = new Navbar([
             'brand' => 'IET System',
             'items' => [
-                ['label' => 'پروفایل', 'href' => '#'],
+                ['label' => 'داشبورد', 'href' => route('dashboard')],
+                ['label' => 'پروفایل', 'href' => route('user.profile',['feature'=>'identification'])],
                   // Logout form item
         [
             'label' => 'خروج',
@@ -57,15 +58,11 @@ class IETAnnounceController extends BaseController
 
 
     public function store(): void
-{    
-    
-    // Validate CSRF token if you have one
-    // if (!validateCsrfToken($_POST['_token'] ?? '')) {
-    //     $_SESSION['error'] = "Invalid CSRF token";
-    //     redirectBack();
-    //     return;
-    // }
-
+{   
+         // CSRF verification
+         if (!csrf('verify', $_POST['_token'] ?? null)) {
+            throw new \RuntimeException('CSRF validation failed');
+        }
     $mediaUrls = [];
     $maxFiles = 5;
     $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'video/mp4', 'video/quicktime'];
