@@ -80,32 +80,48 @@ class AuthController extends BaseController
             'template' => 'layouts/main_layout',
             'scriptHelpers' => []
         ]);
-    }        
-    public function all()
-    {
-        // var_dump($_GET);
+    } 
+    
+    public function allAnnounces(){
         $announceModel = new IETAnnounce();
+        $allAnnounces=$announceModel->all();
+        echo $this->render('iet_announce/all', [
+            'announces' => $allAnnounces,
+            
+        ], []);
+    }
+    public function filteredAnnounces($filter)
+    {
+        $announceModel = new IETAnnounce();
+        if($filter==''){
+            redirect(route('ietannounces.all'));
+        }
         
-        // Get filter parameters
-        $filters = [
-            'supply_demand' => $_GET['sd'] ?? [],
-            'goods_services' => $_GET['gs'] ?? '',
-            'keywords' => array_filter(explode(' ', $_GET['q'] ?? '')),
-            'category' => $_GET['category'] ?? ''
-        ];
-    
-        // Fetch filtered announcements
-        $all = $announceModel->specified(
-            $filters['supply_demand'],
-            $filters['keywords'],
-            $filters['goods_services'],
-            $filters['category']
-        );
-    
-        $this->render('iet_announce/all', [
-            'announces' => $all,
-            'filters' => $filters
-        ], ['modalHelper']);
+        $sd=in_array($filter,['supply','demand']) ? $filter : '';
+        $gs=in_array($filter,['goods','services']) ? $filter : '';
+        $keyWord='';
+        switch($filter){
+            case 'housing':
+                $keyWord=['املاک','مسکن','مشاور املاک'];
+                break;
+            case 'food':
+                $keyWord=['غذا','خوراکی','فست فود'];
+                break;
+            case 'wear':
+                $keyWord=['لباس','پوشاک','لباس مردانه'];
+                break;
+            case 'transportation':
+                $keyWord=['حمل و نقل'];
+                break;
+
+            case 'education':
+                $keyWord=['آموزشی'];
+                break;
+        }
+        $filtered = $announceModel->specified($sd,$keyWord,$gs);
+        echo $this->render('iet_announce/all', [
+            'announces' => $filtered,
+        ], []);
     }
 
     public function home(){

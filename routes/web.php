@@ -23,9 +23,9 @@ Route::get('/ietannounce/show/{id}', 'IETAnnounceController@show')->name('ietann
 Route::get('/ietannounce/edit/{id}', 'IETAnnounceController@edit')->name('ietannounce.edit');
 Route::post('/ietannounce/update/{id}', 'IETAnnounceController@update')->name('ietannounce.update');
 Route::post('/ietannounce/delete/{id}', 'IETAnnounceController@delete')->name('ietannounce.delete');
-// Optional for admin/overview
-Route::get('/ietannounce/all', 'AuthController@all')->name('ietannounce.all'); 
 
+Route::get('/ietannounce/filtered/{filter}', 'AuthController@filteredAnnounces')->name('ietannounce.filtered'); 
+Route::get('/ietannounce/all','AuthController@allAnnounces')->name('ietannounce.all');
 
 // CommentsOnAnnounces
 Route::get('/ietannounce/{announce_id}/add_comment', 'IETAnnounceCommentController@addCommentOnAnnounce')->name('ietannounce.add_comment'); 
