@@ -1,5 +1,5 @@
 <form action="<?= route('ietannounce.store') ?>" method="POST" enctype="multipart/form-data" class="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow space-y-6 text-right" dir="rtl">
- <?php csrf('field') ?>
+ <?php echo csrf('field') ?>
 <!-- عرضه یا تقاضا -->
   <div>
     <label class="block text-sm font-medium text-gray-700 mb-2">عرضه یا تقاضا <span class="text-red-500">*</span></label>

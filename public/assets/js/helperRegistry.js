@@ -4,11 +4,11 @@ const helperRegistry = {
       method: 'loadCategories',
       args: ['main_categories', 'sub_categories', '/data/categories.json']
     },
-    // filePreview: {
-    //   module: '/assets/js/helpers/filePreviewer.js',
-    //   method: 'initMediaPreviewer',
-    //   args: ['input[name="media_uploads[]"]', '#media_preview', { clearOnChange: false }]
-    // },
+    filePreview: {
+      module: '/assets/js/helpers/filePreviewer.js',
+      method: 'initMediaPreviewer',
+      args: ['input[name="media_uploads[]"]', '#media_preview', { clearOnChange: false }]
+    },
     existingMedia: {
       module: '/assets/js/helpers/filePreviewer.js',
       method: 'initExistingMediaPreviewer',

@@ -29,11 +29,12 @@
         loginRoute: '<?= route('auth.login') ?>' // Add route here
     };
 </script>
-
-<?php foreach($scriptHelpers ?? [] as $helper): ?>
-  <script type="module" src="<?= base_url('assets/js/helpers/'.$helper.'.js') ?>"></script>
-<?php endforeach; ?>
-
+<?php if (!empty($scriptHelpers)): ?>
+  <script type="module">
+    import { orchestrate } from '/assets/js/orchestrator.js';
+    orchestrate(<?= json_encode($scriptHelpers) ?>);
+  </script>
+<?php endif; ?>
 
 
 
