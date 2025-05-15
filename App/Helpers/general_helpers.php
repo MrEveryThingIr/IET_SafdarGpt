@@ -3,7 +3,10 @@
 $helperFiles = [
     __DIR__.'/security/security_helpers.php',
     __DIR__.'/security/csrf_helpers.php',
-    __DIR__.'/html_helpers.php'
+    __DIR__.'/html_helpers/navbar_samples.php',
+    __DIR__.'/html_helpers/navbar_helpers.php',
+    __DIR__.'/html_helpers/sidebar_helpers.php',
+    __DIR__.'/html_helpers/sidebar_samples.php'
 ];
 
 foreach ($helperFiles as $file) {
@@ -122,6 +125,6 @@ function currentUser(){
         $user->id=$_SESSION['user_id'];
         return $user->fetchUserById();
     }else{
-        redirect('auth.login');
+        redirect(route('auth.login'));
     }
 }

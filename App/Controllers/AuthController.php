@@ -1,8 +1,9 @@
 <?php
 declare(strict_types=1);
-
 namespace App\Controllers;
 
+require_once base_path('data/navbars/dashboard.php');
+require_once base_path('data/sidebars/dashboard.php');
 use App\Core\BaseController;
 use App\HTMLRenderer\Layout;
 use App\Models\User;
@@ -13,8 +14,10 @@ use App\Models\IETAnnounce;
 
 class AuthController extends BaseController
 {
+    
     public function __construct(){
-        // Prepare items array based on authentication status
+        
+    // Prepare items array based on authentication status
         $items = [
             [
                 'label' => 'معرفی',
@@ -262,35 +265,12 @@ class AuthController extends BaseController
         if(!isLoggedIn()){
             redirect(route('iethome'));
         }
+
         $user=currentUser();
-        $navbar=new Navbar([
-            'brand'=>'IET System',
-            'items'=>[
-                [
-                    'label' => $user['firstname'] . ' ' . $user['lastname'],
-                    'href' => route('user.profile',['feature'=>'identification','user_id'=>$user['id']]),
-                    'class' => 'flex items-center gap-2 text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium',
-                    'icon' => '<img src="' . $user['img'] . '" class="w-8 h-8 rounded-full object-cover">',
-                ],
-         
-                ['label'=>'خانه','href'=>route('iethome'),'class'=>'bg-green-700 m-1 text-white text-lg font-semibold rounded-md p-2'],
-                
-                [
-                    'label' => 'خروج',
-                    'form' => true, // Flag to indicate this is a form
-                    'action' => route('auth.logout'),
-                    'class' => 'bg-green-700 m-1 text-white text-lg font-semibold rounded-md p-2',
-                    'method' => 'POST'
-                ],   
-            ]
-        ]);
-        $sidebar=new Sidebar([
-            'items'=>[
-                
-                    ['label'=>' افزودن اعلام','href'=>route('ietannounce.create')],
-                    ['label'=>'اعلامهای من','href'=>route('ietannounce.mine')],
-            ]
-        ]);
+        $dashboard_navbar_items=dashboard_navbar($user);
+        $dashboard_sidebar_items=dashboard_sidebar();
+        $navbar=new Navbar($dashboard_navbar_items);
+        $sidebar=new Sidebar($dashboard_sidebar_items);
         $this->layout = new Layout($navbar, $sidebar, [
             'title' => 'خانه',
             'template' => 'layouts/main_layout',

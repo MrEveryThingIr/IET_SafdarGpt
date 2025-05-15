@@ -11,9 +11,15 @@ class Sidebar implements RenderableInterface
     {
         $this->config = array_merge([
             'items'         => [],
+            'header'        => null,
+            'footer'        => null,
+            'bodyClass'     => null,
+            'listClass'     => null,
             'stylesPaths'   => [],
             'scriptHelpers' => [],
             'template'      => 'templates/sidebar_template',
+            'defaultItemClass' => 'block p-2 rounded hover:bg-gray-700 transition-colors duration-200',
+            'defaultActiveClass' => 'bg-gray-700 font-semibold',
         ], $config);
     }
 
@@ -44,5 +50,17 @@ class Sidebar implements RenderableInterface
     public function getScriptHelpers(): array
     {
         return $this->config['scriptHelpers'];
+    }
+
+    public function setDefaultItemClass(string $class): self
+    {
+        $this->config['defaultItemClass'] = $class;
+        return $this;
+    }
+
+    public function setDefaultActiveClass(string $class): self
+    {
+        $this->config['defaultActiveClass'] = $class;
+        return $this;
     }
 }
