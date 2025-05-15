@@ -6,7 +6,7 @@ use App\Core\BaseModel;
 class User extends BaseModel {
     protected string $table = 'users';
     public $id, $firstname, $lastname, $username, $phone, $role, $main_job, $birthdate, $password, $email, $created_at, $updated_at, $gender, $img;
-
+    
     protected function ensureTableExist(): void {
         $sql = "CREATE TABLE IF NOT EXISTS {$this->table} (
             id INT(11) AUTO_INCREMENT PRIMARY KEY,
@@ -23,7 +23,7 @@ class User extends BaseModel {
             gender VARCHAR(10),
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-        )";
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
         $this->db->exec($sql);
     }
 

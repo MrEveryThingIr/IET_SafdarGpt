@@ -55,8 +55,7 @@ class IETAnnounce extends BaseModel
 
     public function all(): array
     {
-        $stmt = $this->db->query("SELECT * FROM {$this->table} ORDER BY created_at DESC");
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return $this->all_records($this->table);
     }
 
     public function getByUser(int $userId): array

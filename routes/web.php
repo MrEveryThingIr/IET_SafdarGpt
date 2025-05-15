@@ -34,3 +34,9 @@ Route::post('/ietannounce/{announce_id}/store_comment', 'IETAnnounceCommentContr
 
 // contracts
 Route::get('/contracts/create', 'ContractController@createContract')->name('ietannounce.createForm'); 
+
+
+// categories
+Route::get('/ietcategories/create_main','CategoryController@createMainCategoryForm')->name('ietcategories.create_main');
+// chat rooms
+Route::get('/ietchats/rooms/create', 'ChatController@createChatRoomForm')->name('ietchats.room.create'); 
