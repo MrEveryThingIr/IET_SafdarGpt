@@ -120,13 +120,13 @@ function inputField(string $name, string $label, string $type = 'text', array $a
     return $html;
 }
 use App\Models\User;
-function currentUser(){
-    
-    if(isLoggedIn()){
-        $user=new User();
+function user($id=null){
+    $user=new User();
+    if($id==null && isLoggedIn()){
         $user->id=$_SESSION['user_id'];
         return $user->fetchUserById();
-    }else{
-        return;
+    }elseif($id!=null){
+        $user->id=$id;
+        return $user->fetchUserById();
     }
 }

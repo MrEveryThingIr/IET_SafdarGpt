@@ -6,7 +6,7 @@ function dashboardnavbar(): Navbar {
     
     
     if(isLoggedIn()){
-        $user = currentUser();
+        $user = user();
         $navbar = [];
         $navbar = add_navbar_brand($navbar, 'Dashboard', route('dashboard'), 'text-2xl font-bold text-black');
         $navbar = add_navbar_user_profile($navbar, $user);
@@ -41,7 +41,7 @@ function home_navbar(): Navbar {
         $navbar = add_navbar_item($navbar, 'عضویت', route('auth.register'), 'text-gray-700 hover:text-blue-600 px-3 py-2');
         $navbar = add_navbar_item($navbar, 'وارد شوید', route('auth.login'), 'bg-green-700 text-white px-4 py-2 rounded-md');
     } else {
-        $user = currentUser();
+        $user = user();
         $navbar = add_navbar_user_profile($navbar, $user);
         $navbar = add_navbar_item($navbar, 'داشبورد', route('dashboard'), 'px-4 py-2 text-lg font-medium text-gray-700 hover:text-blue-600');
         $navbar = add_navbar_form_button($navbar, 'خروج', route('auth.logout'), 'POST', 'bg-red-600 text-white px-4 py-2 rounded-md');
@@ -51,7 +51,7 @@ function home_navbar(): Navbar {
 }
 
 function admin_navbar(): Navbar {
-    $user = currentUser();
+    $user = user();
 
     $navbar = [];
     $navbar = add_navbar_brand($navbar, 'Admin Panel', route('dashboard'), 'text-2xl font-bold text-white');

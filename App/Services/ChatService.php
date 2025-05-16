@@ -3,19 +3,19 @@
 namespace App\Services;
 
 use App\Models\ChatRoom;
-use App\Models\ChatInvitees;
+use App\Models\ChatInvitee;
 use App\Models\Chat;
 
 class ChatService
 {
     private ChatRoom $chatRoomModel;
-    private ChatInvitees $inviteesModel;
+    private ChatInvitee $inviteesModel;
     private Chat $chatModel;
 
     public function __construct()
     {
         $this->chatRoomModel = new ChatRoom();
-        $this->inviteesModel = new ChatInvitees();
+        $this->inviteesModel = new ChatInvitee();
         $this->chatModel = new Chat();
     }
 
@@ -147,4 +147,10 @@ class ChatService
     {
         return $this->inviteesModel->countInviteesInRoomId($roomId);
     }
+
+    public function isUserAlreadyInvitedToRoom(int $userId, int $roomId): bool
+{
+    return $this->inviteesModel->isUserAlreadyInvited($userId, $roomId);
+}
+
 }

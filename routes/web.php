@@ -47,3 +47,8 @@ Route::get('/ietcategories/all_categories','CategoryController@allCategories')->
 // chat rooms
 Route::get('/ietchats/rooms/create', 'ChatController@createChatRoomForm')->name('ietchats.room.create'); 
 Route::get('/ietchats/rooms/allChatRooms', 'ChatController@allChatRooms')->name('ietchats.room.all'); 
+Route::get('/ietchats/rooms/show/{id}', 'ChatController@showChatRoom')->name('ietchats.room.show'); 
+Route::post('/ietchats/rooms/create','ChatController@storeChatRoom')->name('ietchats.room.store');
+Route::post('/ietchats/rooms/delete/{id}','ChatController@deleteChatRoom')->name('ietchats.room.delete');
+Route::post('/ietchats/rooms/invite','ChatController@inviteUserToChatRoom')->name('ietchats.room.invite');
+Route::post('/ietchats/rooms/send_message','ChatController@sendMessage')->name('ietchats.send_message');

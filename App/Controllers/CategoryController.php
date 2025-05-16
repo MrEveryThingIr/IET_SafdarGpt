@@ -28,6 +28,7 @@ class CategoryController extends BaseController
 
      public function allCategories(){
         $categories=$this->categoryService->getAllMainCategories();
+        // $statistics=$this->categoryService->getCategoryStatistics()['mainCategoryStatistics'];
         
         $this->render('categories/all_categories',['categories'=>$categories],[]);
     }

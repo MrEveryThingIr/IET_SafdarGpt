@@ -4,7 +4,7 @@ use App\HTMLRenderer\Sidebar;
 function dashboardsidebar(): Sidebar {
     $sidebar = [];
 
-    $user = currentUser();
+    $user = user();
 
     $sidebar = sidebar_add_header(
         $sidebar,
@@ -27,11 +27,34 @@ function dashboardsidebar(): Sidebar {
     return new Sidebar($sidebar);
 }
 
+function chatroomSidebar($members_list=[]){
+        $sidebar = [];
+
+    $user = user();
+
+    $sidebar = sidebar_add_header(
+        $sidebar,
+        $user,
+        $user['balance'] ?? '0',
+        $user['bio'] ?? 'همه چیز برای همه، همه برای هم',
+        'mb-4 p-4 bg-blue-100 rounded text-gray-800'
+    );
+    
+    $sidebar = sidebar_add_item($sidebar, 'بازگشت', 0, route('dashboard'), '', '📊', true);
+    foreach($members_list as $member){
+        
+    $sidebar = sidebar_add_item($sidebar, user($member['invited_user_id'])['username'], null, '#', '', '📊');
+    }
+     $sidebar = sidebar_set_style($sidebar, 'w-64 bg-blue-400 text-white h-full p-4');
+
+    return new Sidebar($sidebar);
+}
+
 function home_sidebar(): Sidebar {
     $sidebar = [];
 
     if (isLoggedIn()) {
-        $user = currentUser();
+        $user = user();
         $sidebar = sidebar_add_header($sidebar, $user, $user['balance'] ?? '0', $user['bio'] ?? '');
         $sidebar = sidebar_add_item($sidebar, 'Profile', null, '#', '', '👤');
         $sidebar = sidebar_add_item($sidebar, 'Logout', null, '#', 'text-red-400 hover:bg-red-800', '🚪');
@@ -52,7 +75,7 @@ function home_sidebar(): Sidebar {
 function admin_sidebar(): Sidebar {
     $sidebar = [];
 
-    $user = currentUser();
+    $user = user();
     $sidebar = sidebar_add_header($sidebar, $user, '∞', 'Administrator');
 
     $sidebar = sidebar_add_item($sidebar, 'Dashboard', null, '#', '', '🧭', true);
