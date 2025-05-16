@@ -24,8 +24,8 @@ Route::get('/ietannounce/edit/{id}', 'IETAnnounceController@edit')->name('ietann
 Route::post('/ietannounce/update/{id}', 'IETAnnounceController@update')->name('ietannounce.update');
 Route::post('/ietannounce/delete/{id}', 'IETAnnounceController@delete')->name('ietannounce.delete');
 
-Route::get('/ietannounce/filtered/{filter}', 'AuthController@filteredAnnounces')->name('ietannounce.filtered'); 
-Route::get('/ietannounce/all','AuthController@allAnnounces')->name('ietannounce.all');
+Route::get('/ietannounce/filtered/{filter}', 'IETAnnounceController@filteredAnnounces')->name('ietannounce.filtered'); 
+Route::get('/ietannounce/all','IETAnnounceController@allAnnounces')->name('ietannounce.all');
 
 // CommentsOnAnnounces
 Route::get('/ietannounce/{announce_id}/add_comment', 'IETAnnounceCommentController@addCommentOnAnnounce')->name('ietannounce.add_comment'); 
@@ -37,6 +37,13 @@ Route::get('/contracts/create', 'ContractController@createContract')->name('ieta
 
 
 // categories
-Route::get('/ietcategories/create_main','CategoryController@createMainCategoryForm')->name('ietcategories.create_main');
+Route::post('/ietcategories/main/store','CategoryController@storeMainCategory')->name('ietcategories.main.store');
+Route::post('/ietcategories/main/delete/{id}','CategoryController@deleteMainCategory')->name('ietcategories.main.delete');
+Route::post('/ietcategories/sub/delete/{id}','CategoryController@deleteSubCategory')->name('ietcategories.sub.delete');
+Route::post('/ietcategories/sub/store','CategoryController@storeSubCategory')->name('ietcategories.sub.store');
+Route::get('/ietcategories/create_main_category','CategoryController@createMainCategoryForm')->name('ietcategories.create_main');
+Route::get('/ietcategories/{id}/show_main_category','CategoryController@showMainCategory')->name('ietcategories.show_main');
+Route::get('/ietcategories/all_categories','CategoryController@allCategories')->name('ietcategories.all');
 // chat rooms
 Route::get('/ietchats/rooms/create', 'ChatController@createChatRoomForm')->name('ietchats.room.create'); 
+Route::get('/ietchats/rooms/allChatRooms', 'ChatController@allChatRooms')->name('ietchats.room.all'); 

@@ -17,29 +17,8 @@ class IETAnnounceController extends BaseController
 
     public function __construct()
     {
-        $navbar = new Navbar([
-            'brand' => 'IET System',
-            'items' => [
-                ['label' => 'داشبورد', 'href' => route('dashboard')],
-                ['label' => 'پروفایل', 'href' => route('user.profile',['feature'=>'identification'])],
-                  // Logout form item
-        [
-            'label' => 'خروج',
-            'form' => true, // Flag to indicate this is a form
-            'action' => route('auth.logout'),
-            'class' => 'bg-green-700 m-1 text-white text-lg font-semibold rounded-md p-2',
-            'method' => 'POST'
-        ],
-            ]
-        ]);
-
-        $sidebar = new Sidebar([
-            'items' => [
-                ['label' => 'اعلام عرضه یا تقاضا', 'href' => route('ietannounce.create')],
-                ['label' => 'اعلام‌های من', 'href' => route('ietannounce.mine')],
-                ['label' => 'همه‌ی اعلام‌ها', 'href' => route('ietannounce.all')],
-            ]
-        ]);
+        $navbar =dashboardnavbar();
+         $sidebar = isLoggedIn()?dashboardsidebar():null;
 
         $this->layout = new Layout($navbar, $sidebar, [
             'title' => 'اعلام عرضه یا تقاضا',
@@ -179,6 +158,49 @@ class IETAnnounceController extends BaseController
         $this->render('iet_announce/mine', ['announces' => $announces]);
     }
 
+    public function allAnnounces(){
+        $announceModel = new IETAnnounce();
+        $allAnnounces=$announceModel->all();
+        echo $this->render('iet_announce/all', [
+            'announces' => $allAnnounces,
+            
+        ], []);
+    }
+    public function filteredAnnounces($filter)
+    {
+        $sidebar=dashboardsidebar();
+        
+        $announceModel = new IETAnnounce();
+        if($filter==''){
+            redirect(route('ietannounces.all'));
+        }
+        
+        $sd=in_array($filter,['supply','demand']) ? $filter : '';
+        $gs=in_array($filter,['goods','services']) ? $filter : '';
+        $keyWord='';
+        switch($filter){
+            case 'housing':
+                $keyWord=['املاک','مسکن','مشاور املاک'];
+                break;
+            case 'food':
+                $keyWord=['غذا','خوراکی','فست فود'];
+                break;
+            case 'wear':
+                $keyWord=['لباس','پوشاک','لباس مردانه'];
+                break;
+            case 'transportation':
+                $keyWord=['حمل و نقل'];
+                break;
+
+            case 'education':
+                $keyWord=['آموزشی'];
+                break;
+        }
+        $filtered = $announceModel->specified($sd,$keyWord,$gs);
+        echo $this->render('iet_announce/all', [
+            'announces' => $filtered,
+        ], []);
+    }
     public function show(int $id): void
     {
         $comments=new IETAnnounceComment();

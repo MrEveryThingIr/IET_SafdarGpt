@@ -1,0 +1,1 @@
+<a href="<?php echo route('ietchats.room.create') ?>">ایجاد چت روم</a>

@@ -15,24 +15,23 @@ class ChatController extends BaseController
     private $chatServices;
     public function __construct(){
         $this->chatServices=new ChatService();
+             $navbar =dashboardnavbar();
+         $sidebar = isLoggedIn()?dashboardsidebar():null;
+
+        $this->layout = new Layout($navbar, $sidebar, [
+            'title' => 'اعلام عرضه یا تقاضا',
+            'template' => 'layouts/main_layout',
+            'scriptHelpers' => [] // method-level override
+        ]);
+
  
     }
 
     public function createChatRoomForm(){
-
-        
-        
-        $navbar=dashboardnavbar();
-
-
-        $sidebar = admin_sidebar();
-       
-        $this->layout = new Layout($navbar, $sidebar , [
-            'title' => 'تالارهای گفتگو',
-            'template' => 'layouts/main_layout',
-            'scriptHelpers' => []
-        ]);
         echo $this->render('chats/create_chatroom',[],[]);
-        // var_dump($navbar);
+    }
+
+    public function allChatRooms(){
+        $this->render('chats/all_chatrooms',[],[]);
     }
 }

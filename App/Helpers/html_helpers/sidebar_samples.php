@@ -14,12 +14,15 @@ function dashboardsidebar(): Sidebar {
         'mb-4 p-4 bg-blue-100 rounded text-gray-800'
     );
 
-    $sidebar = sidebar_add_item($sidebar, 'Dashboard', null, '#', '', '📊', true);
-    $sidebar = sidebar_add_item($sidebar, 'Reports', null, '#', '', '📈');
-    $sidebar = sidebar_add_item($sidebar, 'Settings', null, '#', '', '⚙️');
-    $sidebar = sidebar_add_item($sidebar, 'Logout', null, '#', 'text-red-400 hover:bg-red-800', '🚪');
+    $sidebar = sidebar_add_item($sidebar, 'اعلام ها', null, route('ietannounce.all'), '', '📊', true);
+    $sidebar = sidebar_add_item($sidebar, 'مقاله ها', null, '#', '', '📈');
+    $sidebar = sidebar_add_item($sidebar, 'گروهها و گفتگوها', null, route('ietchats.room.all'), '', '⚙️');
+    if($user['username']=='SMSchrodinger'){
+         $sidebar = sidebar_add_item($sidebar, 'دسته بندیها', null, route('ietcategories.all'), '');
+    }
+ 
 
-    $sidebar = sidebar_set_style($sidebar, 'w-64 bg-gray-900 text-white h-full p-4');
+    $sidebar = sidebar_set_style($sidebar, 'w-64 bg-blue-400 text-white h-full p-4');
 
     return new Sidebar($sidebar);
 }

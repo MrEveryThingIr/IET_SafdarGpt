@@ -16,68 +16,7 @@ class AuthController extends BaseController
 {
     
     public function __construct(){
-        
-    // Prepare items array based on authentication status
-        $items = [
-            [
-                'label' => 'معرفی',
-                'href' => route('iethome'),
-                'class' => 'm-1 px-4 py-2 bg-green-700 text-white text-lg font-semibold rounded-md hover:bg-green-800 transition-colors'
-            ],
-            [
-                'label' => 'اعلام‌ها',
-                'href' => route('ietannounce.all',['sd'=>'sd']),
-                'class' => 'm-1 px-4 py-2 bg-green-700 text-white text-lg font-semibold rounded-md hover:bg-green-800 transition-colors'
-            ],
-        ];
-        
-        if (!isLoggedIn()) {
-            array_unshift($items,
-                [
-                    'label' => 'عضویت',
-                    'href' => route('auth.register'),
-                    'class' => 'px-4 py-2 text-lg font-medium text-gray-700 hover:text-blue-600 transition-colors'
-                ],
-                [
-                    'label' => 'وارد شوید',
-                    'href' => route('auth.login'),
-                    'class' => 'm-1 px-4 py-2 bg-green-700 text-white text-lg font-semibold rounded-md hover:bg-green-800 transition-colors'
-                ]
-            );
-        } else {
-            $user = currentUser();
-        
-            array_unshift($items,
-                [
-                    'label' => $user['firstname'] . ' ' . $user['lastname'],
-                    'href' => route('user.profile', ['feature' => 'identification', 'user_id' => $user['id']]),
-                    'class' => 'flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors',
-                    'icon' => '<img src="' . $user['img'] . '" class="w-8 h-8 rounded-full object-cover">'
-                ],
-                [
-                    'label' => 'داشبورد',
-                    'href' => route('dashboard'),
-                    'class' => 'm-1 px-4 py-2 bg-green-700 text-white text-lg font-semibold rounded-md hover:bg-green-800 transition-colors'
-                ],
-                [
-                    'label' => 'خروج',
-                    'form' => true,
-                    'action' => route('auth.logout'),
-                    'method' => 'POST',
-                    'class' => 'm-1 px-4 py-2 bg-green-700 text-white text-lg font-semibold rounded-md hover:bg-green-800 transition-colors'
-                ]
-            );
-        }
-        
-        $navbar = new Navbar([
-            'brand' => [
-                'label' => 'IET System',
-                'href' => route('iethome'),
-                'class' => 'text-2xl font-bold text-gray-800 hover:text-blue-600'
-            ],
-            'items' => $items
-        ]);
-        
+        $navbar=home_navbar();
         $this->layout = new Layout($navbar, $sidebar = null, [
             'title' => 'خانه',
             'template' => 'layouts/main_layout',
@@ -86,45 +25,11 @@ class AuthController extends BaseController
     } 
     
     public function allAnnounces(){
-        $announceModel = new IETAnnounce();
-        $allAnnounces=$announceModel->all();
-        echo $this->render('iet_announce/all', [
-            'announces' => $allAnnounces,
-            
-        ], []);
+        redirect(route('ietannounce.all'));
     }
     public function filteredAnnounces($filter)
     {
-        $announceModel = new IETAnnounce();
-        if($filter==''){
-            redirect(route('ietannounces.all'));
-        }
-        
-        $sd=in_array($filter,['supply','demand']) ? $filter : '';
-        $gs=in_array($filter,['goods','services']) ? $filter : '';
-        $keyWord='';
-        switch($filter){
-            case 'housing':
-                $keyWord=['املاک','مسکن','مشاور املاک'];
-                break;
-            case 'food':
-                $keyWord=['غذا','خوراکی','فست فود'];
-                break;
-            case 'wear':
-                $keyWord=['لباس','پوشاک','لباس مردانه'];
-                break;
-            case 'transportation':
-                $keyWord=['حمل و نقل'];
-                break;
-
-            case 'education':
-                $keyWord=['آموزشی'];
-                break;
-        }
-        $filtered = $announceModel->specified($sd,$keyWord,$gs);
-        echo $this->render('iet_announce/all', [
-            'announces' => $filtered,
-        ], []);
+        redirect(route('ietannounce.filtered'));
     }
 
     public function home(){
@@ -265,18 +170,17 @@ class AuthController extends BaseController
         if(!isLoggedIn()){
             redirect(route('iethome'));
         }
-
-        $user=currentUser();
-        $dashboard_navbar_items=dashboard_navbar($user);
-        $dashboard_sidebar_items=dashboard_sidebar();
-        $navbar=new Navbar($dashboard_navbar_items);
-        $sidebar=new Sidebar($dashboard_sidebar_items);
-        $this->layout = new Layout($navbar, $sidebar, [
+        
+        $dashboard_navbar=dashboardnavbar();
+        $dashboard_sidebar=dashboardsidebar();
+       
+        
+        $this->layout = new Layout($dashboard_navbar, $dashboard_sidebar, [
             'title' => 'خانه',
             'template' => 'layouts/main_layout',
             'scriptHelpers' => [] // method-level override
         ]);
-        $this->render('auth/dashboard',['user'=>$user],[]);
+        $this->render('auth/dashboard',[],[]);
     }
     
 }

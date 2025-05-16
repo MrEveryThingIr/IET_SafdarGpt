@@ -1,3 +1,4 @@
+
 <div class="max-w-5xl mx-auto p-6 space-y-6" dir="rtl">
   <!-- Categories Navigation -->
   <div class="flex flex-wrap gap-2 mb-6">

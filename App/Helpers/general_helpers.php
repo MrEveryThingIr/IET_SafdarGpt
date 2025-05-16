@@ -6,8 +6,10 @@ $helperFiles = [
     __DIR__.'/html_helpers/navbar_samples.php',
     __DIR__.'/html_helpers/navbar_helpers.php',
     __DIR__.'/html_helpers/sidebar_helpers.php',
-    __DIR__.'/html_helpers/sidebar_samples.php'
+    __DIR__.'/html_helpers/sidebar_samples.php',
+    __DIR__.'/session_helpers.php'
 ];
+
 
 foreach ($helperFiles as $file) {
     if (!file_exists($file)) {
@@ -125,6 +127,6 @@ function currentUser(){
         $user->id=$_SESSION['user_id'];
         return $user->fetchUserById();
     }else{
-        redirect(route('auth.login'));
+        return;
     }
 }
