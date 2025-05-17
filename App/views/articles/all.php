@@ -1,0 +1,1 @@
+<a href="<?php echo route('ietarticles.create') ?>">create article</a>

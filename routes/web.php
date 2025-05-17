@@ -52,3 +52,9 @@ Route::post('/ietchats/rooms/create','ChatController@storeChatRoom')->name('ietc
 Route::post('/ietchats/rooms/delete/{id}','ChatController@deleteChatRoom')->name('ietchats.room.delete');
 Route::post('/ietchats/rooms/invite','ChatController@inviteUserToChatRoom')->name('ietchats.room.invite');
 Route::post('/ietchats/rooms/send_message','ChatController@sendMessage')->name('ietchats.send_message');
+
+
+// articles
+
+Route::get('/ietarticles/all','ArticleController@allArticles')->name('ietarticles.all');
+Route::get('/ietarticles/create','ArticleController@createArticleForm')->name('ietarticles.create');

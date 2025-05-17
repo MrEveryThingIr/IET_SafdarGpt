@@ -2,7 +2,8 @@
 use App\HTMLRenderer\Sidebar;
 
 function dashboardsidebar(): Sidebar {
-    $sidebar = [];
+    if(isLoggedIn()){
+         $sidebar = [];
 
     $user = user();
 
@@ -15,7 +16,7 @@ function dashboardsidebar(): Sidebar {
     );
 
     $sidebar = sidebar_add_item($sidebar, 'اعلام ها', null, route('ietannounce.all'), '', '📊', true);
-    $sidebar = sidebar_add_item($sidebar, 'مقاله ها', null, '#', '', '📈');
+    $sidebar = sidebar_add_item($sidebar, 'مقاله ها', null,  route('ietarticles.all'), '', '📈');
     $sidebar = sidebar_add_item($sidebar, 'گروهها و گفتگوها', null, route('ietchats.room.all'), '', '⚙️');
     if($user['username']=='SMSchrodinger'){
          $sidebar = sidebar_add_item($sidebar, 'دسته بندیها', null, route('ietcategories.all'), '');
@@ -25,6 +26,10 @@ function dashboardsidebar(): Sidebar {
     $sidebar = sidebar_set_style($sidebar, 'w-64 bg-blue-400 text-white h-full p-4');
 
     return new Sidebar($sidebar);
+    }else{
+        return home_sidebar();
+    }
+   
 }
 
 function chatroomSidebar($members_list=[]){
@@ -40,7 +45,7 @@ function chatroomSidebar($members_list=[]){
         'mb-4 p-4 bg-blue-100 rounded text-gray-800'
     );
     
-    $sidebar = sidebar_add_item($sidebar, 'بازگشت', 0, route('dashboard'), '', '📊', true);
+    $sidebar = sidebar_add_item($sidebar, 'بازگشت', 1, route('dashboard'), '', '📊', true);
     foreach($members_list as $member){
         
     $sidebar = sidebar_add_item($sidebar, user($member['invited_user_id'])['username'], null, '#', '', '📊');
