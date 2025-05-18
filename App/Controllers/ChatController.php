@@ -64,7 +64,7 @@ class ChatController extends BaseController
         
         $usersList=$this->userModel->all_records('users');
         $categories=$this->categoryService->getAllSubCategories();
-        $chats=$this->chatServices->listMessages();
+        $chats=$this->chatServices->getMessagesByRoom($id);
         $this->render('chats/show_chatroom',['chats'=>$chats,'categories'=>$categories,'room'=>$chatRoom,'members'=>$members,'all_users'=>$usersList],[]);
     }
 

@@ -70,7 +70,7 @@ class ArticleService
     /** Get all articles with optional limit */
     public function listArticles(int $limit = 50): array
     {
-        return $this->articleModel->all(limit: $limit);
+        return $this->articleModel->all( $limit);
     }
 
     /** Add a block to an article */

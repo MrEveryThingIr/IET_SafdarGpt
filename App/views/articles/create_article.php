@@ -70,9 +70,10 @@
         <div>
             <label for="language_code" class="block text-sm font-medium text-gray-700 mb-1">Language</label>
             <select name="language_code" id="language_code" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
-                <?php foreach ($languages as $code => $label): ?>
-                    <option value="<?= $code ?>"><?= $label ?></option>
-                <?php endforeach; ?>
+                <!-- <\?php foreach ($languages as $code => $label): ?> -->
+                    <!-- <option value="\<\?= $code \?>"><\?= $label ?></option> -->
+                     <option value="1">فارسی</option>
+                <!-- <\?php endforeach; ?> -->
             </select>
         </div>
     </div>

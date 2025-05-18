@@ -63,7 +63,7 @@ class Chat extends BaseModel
     {
         $sql = "SELECT * FROM chats WHERE to_chatroom_id = :room_id ORDER BY created_at ASC";
         $stmt = $this->db->prepare($sql);
-        $stmt->execute([$roomId]);
+        $stmt->execute(['room_id'=>$roomId]);
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 

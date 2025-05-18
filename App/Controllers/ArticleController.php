@@ -4,6 +4,7 @@ namespace App\Controllers;
 use App\Core\BaseController;
 use App\Models\MainCategory;
 use App\Models\SubCategory;
+use App\Services\ArticleService;
 use App\Services\CategoryService;
 use App\HTMLRenderer\Layout;
 class ArticleController extends BaseController
@@ -11,7 +12,9 @@ class ArticleController extends BaseController
     private $categoryService;
     private $mainCateModel;
     private $subCateModel;
+    private $articleService;
     public function __construct(){
+        $this->articleService=new ArticleService();
         $this->mainCateModel=new MainCategory();
         $this->subCateModel=new SubCategory();
         $this->categoryService=new CategoryService($this->mainCateModel,$this->subCateModel);
@@ -29,7 +32,33 @@ class ArticleController extends BaseController
         $this->render('articles/create_article',['categories'=>$categories],[]);
     }
 
-     public function allArticles(){
-        $this->render('articles/all',[],[]);
+       public function createArticleBlockForm(){
+        
+        $this->render('articles/add_article_block',[],[]);
     }
+     public function allArticles(){
+        $articles=$this->articleService->listArticles();
+        $this->render('articles/all',['articles'=>$articles],[]);
+    }
+
+public function showArticle($id)
+{
+    $article = $this->articleService->getArticleWithBlocks($id);
+
+    $builder = (new \App\HTMLRenderer\ArticleBuilder())
+        ->withArticleData($article)
+        ->withHeadings()
+        ->withParagraphs()
+        ->withImages()
+        ->withLists();
+
+   $this->render('articles/show_article',['article'=>$builder],[]);
+}
+
+
+    // public function storeArticle() {
+    //     $this->articleService->    ???
+    // }
+
+
 }

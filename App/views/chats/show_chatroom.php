@@ -109,7 +109,16 @@
               <div class="flex justify-start">
                 <div class="max-w-md bg-gray-100 rounded-2xl rounded-tl-none px-5 py-3 shadow-md">
                   <div class="flex justify-between items-center mb-1">
-                    <p class="text-sm font-medium text-gray-700"><?php echo user($chat['sender_id'])['username'] ?></p>
+                   
+
+                       <!-- User Info Section -->
+          <div class="flex items-center gap-3 mb-4">
+            <img src="<?php echo user($chat['sender_id'])['img'] ?>" alt="User avatar" class="w-10 h-10 rounded-full object-cover border-2 border-blue-100">
+            <a href="<?= route('user.profile', ['user_id' => $chat['sender_id'], 'feature' => 'identification']) ?>" class="font-medium text-blue-600 hover:text-blue-800">
+              <?php echo user($chat['sender_id'])['username'] ?>
+            </a>
+          </div>
+
                     <span class="text-xs text-gray-500"><?php echo $chat['created_at'] ?></span>
                   </div>
                   <p class="text-gray-800"><?php echo $chat['chat_context'] ?></p>

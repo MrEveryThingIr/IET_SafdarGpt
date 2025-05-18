@@ -58,3 +58,5 @@ Route::post('/ietchats/rooms/send_message','ChatController@sendMessage')->name('
 
 Route::get('/ietarticles/all','ArticleController@allArticles')->name('ietarticles.all');
 Route::get('/ietarticles/create','ArticleController@createArticleForm')->name('ietarticles.create');
+Route::get('/ietarticles/block/create','ArticleController@createArticleBlockForm')->name('ietarticle.block.create');
+Route::get('/ietarticles/show/{id}','ArticleController@showArticle')->name('ietarticle.show_article');

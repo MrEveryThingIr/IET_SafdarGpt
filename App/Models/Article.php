@@ -12,7 +12,7 @@ class Article extends BaseModel
     {
         $sql = "CREATE TABLE IF NOT EXISTS `{$this->table}` (
             `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-            `author_id` INT UNSIGNED NOT NULL,
+            `author_id` INT NOT NULL,
             `title` VARCHAR(255) NOT NULL,
             `slug` VARCHAR(255) UNIQUE NOT NULL,
             `field` VARCHAR(100) DEFAULT NULL COMMENT 'Category or field',
@@ -70,7 +70,7 @@ class Article extends BaseModel
         return $this->search($this->table, ['deleted_at' => null], [], '', [
             'order_by' => 'created_at',
             'order_dir' => 'DESC',
-            'limit'=> $limit
+            'limit'=> (int)$limit
         ]);
     }
 

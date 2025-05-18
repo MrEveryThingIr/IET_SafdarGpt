@@ -147,9 +147,14 @@ public function search(string $table,array $criteria = [], array $likeFields = [
     $stmt = $this->db->prepare($sql);
     
     // Bind parameters
-    foreach ($params as $key => $value) {
+foreach ($params as $key => $value) {
+    if (in_array($key, [':limit', ':offset'])) {
+        $stmt->bindValue($key, (int)$value, PDO::PARAM_INT);
+    } else {
         $stmt->bindValue($key, $value);
     }
+}
+
 
     $stmt->execute();
 
