@@ -23,13 +23,40 @@ const helperRegistry = {
     modal: {
       module: '/assets/js/helpers/modalHelper.js',
       method: 'initAuthModal',
-      args: ['#commentTrigger', '#commentModal', {
+      args: ['#trigger', '#target_modal', {
           loginRoute: '/login',
           hiddenClass: 'hidden',
           visibleClass: 'block',
           closeSelector: '.close'
       }]
   },
+
+    modalTriggers: {
+    module: '/assets/js/helpers/modalHelper.js',
+    method: 'initModalGroup',
+    args: [
+      [
+        ['#trigger_addParagraphModal', '#addParagraphModal'],
+        ['#trigger_addHeadingModal', '#addHeadingModal'],
+        ['#trigger_addImageModal', '#addImageModal'],
+        ['#trigger_addAudioModal', '#addAudioModal'],
+        ['#trigger_addVideoModal', '#addVideoModal'],
+        ['#trigger_addListModal', '#addListModal'],
+        ['#trigger_addQuoteModal', '#addQuoteModal'],
+        ['#trigger_addDividerModal', '#addDividerModal'],
+        ['#trigger_addEmbedModal', '#addEmbedModal'],
+        ['#trigger_addCtaModal', '#addCtaModal'],
+        ['#trigger_addFaqModal', '#addFaqModal'],
+        ['#trigger_addSectionModal', '#addSectionModal']
+      ],
+      {
+        loginRoute: '/login',
+        hiddenClass: 'hidden',
+        visibleClass: 'block',
+        closeSelector: '.close-button'
+      }
+    ]
+  }
   };
   
   export default helperRegistry;

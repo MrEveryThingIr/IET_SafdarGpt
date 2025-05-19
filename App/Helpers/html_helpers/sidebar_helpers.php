@@ -7,7 +7,8 @@ function sidebar_add_item(
     string $href = '#',
     string $class = '',
     string $icon = '',
-    bool $active = false
+    bool $active = false,
+    array $attributes = []
 ): array {
     if (!isset($sidebar['items']) || !is_array($sidebar['items'])) {
         $sidebar['items'] = [];
@@ -16,8 +17,9 @@ function sidebar_add_item(
     $item = [
         'label' => $label,
         'href'  => $href,
-        'class' => trim($class ?: 'block p-2 rounded hover:bg-gray-700 transition'),
+        'class' => trim('block p-2 rounded hover:bg-gray-700 transition cursor-pointer ' . $class),
         'icon'  => $icon,
+        'attributes' => $attributes,
     ];
 
     if ($active) {
@@ -41,16 +43,17 @@ function sidebar_add_header(
     string $class = ''
 ): array {
     $class = trim($class ?: 'mb-4 p-4 bg-gray-900 rounded');
+    $fullName = trim(($user['firstname'] ?? '') . ' ' . ($user['lastname'] ?? ''));
     $html = '
         <div class="' . htmlspecialchars($class) . '">
             <div class="flex items-center space-x-3">
-                <img src="' . htmlspecialchars($user['img']) . '" class="w-12 h-12 rounded-full object-cover" alt="User">
+                <img src="' . htmlspecialchars($user['img']) . '" class="w-12 h-12 rounded-full object-cover" alt="' . htmlspecialchars($fullName) . '">
                 <div>
-                    <div class="font-semibold">' . htmlspecialchars($user['firstname'] . ' ' . $user['lastname']) . '</div>
+                    <div class="font-semibold">' . htmlspecialchars($fullName) . '</div>
                     <div class="text-sm text-gray-400">💰 ' . htmlspecialchars($balance) . '</div>
                 </div>
             </div>
-            <p class="text-xs mt-2 text-gray-500">' . htmlspecialchars($bio) . '</p>
+            <p class="text-xs mt-2 text-gray-500">' . $bio . '</p>
         </div>
     ';
 

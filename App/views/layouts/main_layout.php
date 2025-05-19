@@ -8,6 +8,7 @@
     <?php foreach ($stylesPaths ?? [] as $cssPath): ?>
         <link rel="stylesheet" href="<?= base_url($cssPath) ?>">
     <?php endforeach; ?>
+    
 </head>
 <body data-view=<?= htmlspecialchars($title ?? 'IET Interface') ?> class="bg-gray-100 font-sans flex">
 
@@ -23,20 +24,25 @@
 <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
 <!-- In your main_layout.php -->
 <script>
-    // Global auth state check
     window._AUTH_STATE = {
         isLoggedIn: <?= isLoggedIn() ? 'true' : 'false' ?>,
-        loginRoute: '<?= route('auth.login') ?>' // Add route here
+        loginRoute: '<?= route('auth.login') ?>'
     };
 </script>
+
 <?php if (!empty($scriptHelpers)): ?>
-  <script type="module">
+<script type="module">
     import { orchestrate } from '/assets/js/orchestrator.js';
     orchestrate(<?= json_encode($scriptHelpers) ?>);
-  </script>
+</script>
 <?php endif; ?>
 
 
+
+
+<?php foreach ($scriptsPaths ?? [] as $jsPath): ?>
+    <script src="<?= base_url($jsPath) ?>"></script>
+<?php endforeach; ?>
 
 
 

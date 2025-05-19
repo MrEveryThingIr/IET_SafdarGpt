@@ -94,3 +94,92 @@ function admin_sidebar(): Sidebar {
     return new Sidebar($sidebar);
 }
 
+
+function articleSidebar($article): Sidebar
+{
+    if (!isLoggedIn()) {
+        return home_sidebar(); // fallback
+    }
+
+    if (!$article) {
+        die("Invalid article");
+    }
+
+    $user = user();
+    $sidebar = [];
+
+    $meta = implode('<br>', [
+        '📄 ' . htmlspecialchars($article['title']),
+        '✍️ ' . htmlspecialchars($user['username']),
+        '🕒 ' . ($article['created_at'] ?? ''),
+        '📌 ' . ($article['status'] ?? 'draft'),
+    ]);
+
+    // Sidebar Header
+    $sidebar = sidebar_add_header(
+        $sidebar,
+        $user,
+        $user['balance'] ?? '0',
+        $meta,
+        'mb-4 p-4 bg-white shadow rounded text-gray-700'
+    );
+
+    // Action Items
+    $modalItems = [
+        [' Add Paragraph', 1, '#addParagraphModal', '📝'],
+        [' Add Heading', 2, '#addHeadingModal', '🔠'],
+        [' Add Image', 3, '#addImageModal', '🖼️'],
+        [' Add Audio', 4, '#addAudioModal', '🎵'],
+        [' Add Video', 5, '#addVideoModal', '🎥'],
+        [' Add List', 6, '#addListModal', '📋'],
+        [' Add Quote', 7, '#addQuoteModal', '💬'],
+        [' Add Divider', 8, '#addDividerModal', '➖'],
+        [' Add Embed', 9, '#addEmbedModal', '🌐'],
+        [' Add CTA', 10, '#addCtaModal', '📌'],
+        [' Add FAQ', 11, '#addFaqModal', '❓'],
+        [' Add Section (Heading + Paragraph)', 12, '#addSectionModal', '📚'],
+        [' Set Styles', 13, '#setStylesModal', '🎨'],
+    ];
+
+ 
+        foreach ($modalItems as [$label, $index, $href, $icon]) {
+            $triggerId = 'trigger_' . ltrim($href, '#');
+
+            $sidebar = sidebar_add_item(
+                $sidebar,
+                $label,
+                $index,
+                $href,
+                '',
+                $icon,
+                false,
+               ['id' => $triggerId, 'data-modal' => $href]
+            );
+    }
+
+    // Preview and Delete
+    $sidebar = sidebar_add_item(
+        $sidebar,
+        ' Preview Article',
+        14,
+        route('ietchats.room.show'), // ✔️ fixed from 'all'
+        '',
+        '🔍'
+    );
+
+    $sidebar = sidebar_add_item(
+        $sidebar,
+        ' Delete Article',
+        15,
+        route('ietchats.room.show'), // ✔️ corrected route
+        'text-red-500 hover:bg-red-600 hover:text-white',
+        '⚠️',
+        false,
+        ['onclick' => 'return confirm("Are you sure you want to delete this article?")']
+    );
+
+    // Final style
+    $sidebar = sidebar_set_style($sidebar, 'w-72 bg-indigo-300 text-white flex flex-col max-h-screen overflow-y-auto');
+
+    return new Sidebar($sidebar);
+}

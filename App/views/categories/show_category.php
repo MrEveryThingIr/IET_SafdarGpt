@@ -1,7 +1,11 @@
 <!-- views/categories/show_category.php -->
 
 <div class="container mx-auto p-6">
-<?php successMessage() ?>
+  <!-- Flash Messages -->
+  <div class="space-y-2">
+    <?php isset($_SESSION['error']) ? errorMessage() : '' ?>
+    <?php isset($_SESSION['success']) ? errorMessage() : '' ?>
+  </div>
     <!-- Main Category Details -->
 <div class="mb-12">
     <h2 class="text-3xl font-extrabold text-gray-800 mb-6 border-b pb-2 border-gray-200">
