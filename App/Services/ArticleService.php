@@ -16,69 +16,53 @@ class ArticleService
         $this->blockModel = new ArticleBlock();
     }
 
-    /**
-     * Create a new article and return its ID
-     */
+    // ──────────────────────────────
+    // 📄 ARTICLE OPERATIONS
+    // ──────────────────────────────
+
     public function createArticle(array $data): int
     {
         return $this->articleModel->create($data);
     }
 
-    /**
-     * Add a block to an article
-     */
-    public function addBlock(int $articleId, array $blockData): int
+    public function getArticleById(int $id): ?array
     {
-        $blockData['article_id'] = $articleId;
-
-        // Assign next order automatically
-        $blockData['block_order'] = $this->blockModel->getMaxOrder($articleId) + 1;
-
-        return $this->blockModel->create($blockData);
+        return $this->articleModel->findById($id);
     }
 
-    /**
-     * Add a compacted block group (e.g., heading + paragraph)
-     */
-    public function addContentSection(int $articleId, string $heading, string $paragraph, ?int $headingLevel = 2): array
+    public function getBySlug(string $slug): ?array
     {
-        $order = $this->blockModel->getMaxOrder($articleId);
-
-        $blocks = [];
-
-        // Heading block
-        $blocks[] = $this->blockModel->create([
-            'article_id' => $articleId,
-            'block_order' => ++$order,
-            'block_type' => 'heading',
-            'content' => $heading,
-            'heading_level' => $headingLevel
-        ]);
-
-        // Paragraph block
-        $blocks[] = $this->blockModel->create([
-            'article_id' => $articleId,
-            'block_order' => ++$order,
-            'block_type' => 'paragraph',
-            'content' => $paragraph
-        ]);
-
-        return $blocks;
+        return $this->articleModel->findBySlug($slug);
     }
 
-    /**
-     * Get full article with blocks, grouped in logical sections
-     */
+    public function updateArticle(int $id, array $data): bool
+    {
+        return $this->articleModel->updateById($data, $id);
+    }
+
+    public function deleteArticle(int $id): bool
+    {
+        $this->blockModel->deleteByArticleId($id); // cascade, but explicit
+        return $this->articleModel->delete($id);
+    }
+
+    public function listLatest(int $limit = 10): array
+    {
+        return $this->articleModel->all($limit);
+    }
+
+    public function searchArticles(array $criteria = [], array $likeFields = [], string $likeValue = '', array $options = []): array|int
+    {
+        return $this->articleModel->searchBy($criteria, $likeFields, $likeValue, $options);
+    }
+
     public function getFullArticleWithSections(int $id): ?array
     {
-        $article = $this->articleModel->findById($id);
-        if (!$article || $article['deleted_at']) {
-            return null;
-        }
+        $article = $this->articleModel->getFullArticle($id);
+        if (!$article) return null;
 
-        $blocks = $this->blockModel->getByArticleId($id);
+        $blocks = $article['blocks'] ?? [];
 
-        // Group blocks by compact sections (e.g., heading + paragraph)
         $sections = [];
         $currentSection = [];
 
@@ -103,51 +87,108 @@ class ArticleService
         return $article;
     }
 
-    /**
-     * Delete an article and all its blocks
-     */
-    public function deleteArticle(int $id): bool
+    // ──────────────────────────────
+    // 🔲 BLOCK OPERATIONS
+    // ──────────────────────────────
+
+    public function addBlock(int $articleId, array $blockData): int
     {
-        $this->blockModel->deleteByArticleId($id);
-        return $this->articleModel->delete($id);
+        $blockData['article_id'] = $articleId;
+        $blockData['block_order'] = $this->blockModel->getMaxOrder($articleId) + 1;
+        return $this->blockModel->create($blockData);
     }
 
-    /**
-     * Update article and optionally its blocks
-     */
-    public function updateArticle(int $id, array $articleData, array $blockUpdates = []): bool
+    public function updateBlock(int $blockId, array $data): bool
     {
-        $updated = $this->articleModel->updateById($articleData, $id);
+        return $this->blockModel->updateById($data, $blockId);
+    }
 
-        foreach ($blockUpdates as $blockId => $blockData) {
-            $this->blockModel->updateById($blockData, $blockId);
+    public function deleteBlock(int $blockId): bool
+    {
+        return $this->blockModel->delete($blockId);
+    }
+
+    public function getBlockById(int $blockId): ?array
+    {
+        return $this->blockModel->findById($blockId);
+    }
+
+    public function getBlocksByArticleId(int $articleId): array
+    {
+        return $this->blockModel->getByArticleId($articleId);
+    }
+
+    public function deleteAllBlocksForArticle(int $articleId): bool
+    {
+        return $this->blockModel->deleteByArticleId($articleId);
+    }
+
+    public function reorderBlocks(int $articleId, array $blockIdsInOrder): bool
+    {
+        $order = 0;
+        foreach ($blockIdsInOrder as $blockId) {
+            $this->blockModel->updateById(['block_order' => ++$order], $blockId);
+        }
+        return true;
+    }
+
+    public function addContentSection(int $articleId, string $heading, string $paragraph, ?int $headingLevel = 2): array
+    {
+        $order = $this->blockModel->getMaxOrder($articleId);
+        $blocks = [];
+
+        $blocks[] = $this->blockModel->create([
+            'article_id' => $articleId,
+            'block_order' => ++$order,
+            'block_type' => 'heading',
+            'content' => $heading,
+            'heading_level' => $headingLevel
+        ]);
+
+        $blocks[] = $this->blockModel->create([
+            'article_id' => $articleId,
+            'block_order' => ++$order,
+            'block_type' => 'paragraph',
+            'content' => $paragraph
+        ]);
+
+        return $blocks;
+    }
+
+    public function getMaxBlockOrder(int $articleId): int
+    {
+        return $this->blockModel->getMaxOrder($articleId);
+    }
+
+    // ──────────────────────────────
+    // 🔍 Composite Methods
+    // ──────────────────────────────
+
+    public function updateArticleWithBlocks(int $articleId, array $articleData, array $blockDataMap): bool
+    {
+        $ok = $this->articleModel->updateById($articleData, $articleId);
+        foreach ($blockDataMap as $blockId => $data) {
+            $this->blockModel->updateById($data, $blockId);
+        }
+        return $ok;
+    }
+
+    public function duplicateArticle(int $id): ?int
+    {
+        $original = $this->articleModel->findById($id);
+        if (!$original) return null;
+
+        unset($original['id'], $original['slug']);
+        $original['title'] .= ' (Copy)';
+        $newId = $this->createArticle($original);
+
+        $blocks = $this->blockModel->getByArticleId($id);
+        foreach ($blocks as $block) {
+            unset($block['id']);
+            $block['article_id'] = $newId;
+            $this->blockModel->create($block);
         }
 
-        return $updated;
-    }
-
-    /**
-     * Search articles by criteria
-     */
-    public function searchArticles(array $criteria = [], array $likeFields = [], string $likeValue = '', array $options = []): array|int
-    {
-        return $this->articleModel->searchBy($criteria, $likeFields, $likeValue, $options);
-    }
-
-    /**
-     * List latest articles with a limit
-     */
-    public function listLatest(int $limit = 10): array
-    {
-        return $this->articleModel->all($limit);
-    }
-
-
-    /**
-     * Retrieve single article by slug
-     */
-    public function getBySlug(string $slug): ?array
-    {
-        return $this->articleModel->findBySlug($slug);
+        return $newId;
     }
 }

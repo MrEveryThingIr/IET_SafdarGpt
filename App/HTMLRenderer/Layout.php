@@ -16,39 +16,50 @@ class Layout implements RenderableInterface
     {
         $this->navbar  = $navbar;
         $this->sidebar = $sidebar;
-        $this->config  = array_merge([
-            'title'         => 'My Website',
-            'stylesPaths'   => [],
-            'scriptsPaths'   => [],
-            'scriptHelpers' => [['name'=>'','needed_configs'=>[]]],
-            'template'      => 'layouts/main_layout',
+        $this->config = array_merge([
+            'title'        => 'My Website',
+            'stylesPaths'  => [],
+            'scriptsPaths' => [],
+            'template'     => 'layouts/main_layout',
         ], $config);
     }
 
-    public function getScriptHelpers(): array
-    {
-        return $this->config['scriptHelpers'] ?? [];
+
+public function getScriptHelpers(): array
+{
+    $helpers = $this->config['scriptHelpers'] ?? [];
+
+    if ($helpers === true || !is_array($helpers)) {
+        return [];
     }
+
+    return $helpers;
+}
+
 
     // public function sendJsConfigsViaJsonApi($js_config){
     //     $jsonapi=new JsonApi();
     //     $jsonapi->send($js_config);
     // }
-    public function render(array $data = []): string
+   public function render(array $data = []): string
     {
-        $view     = $data['view'] ?? '';
-        $viewData = $data['viewData'] ?? [];
+        $view       = $data['view'] ?? '';
+        $viewData   = $data['viewData'] ?? [];
 
-        $scriptHelpers = $data['scriptHelpers'] ?? $this->config['scriptHelpers'];
-
-        $content      = $this->renderPartialWithFallback($view, $viewData);
-        $navbarHtml   = $this->navbar?->render() ?? '';
-        $sidebarHtml  = $this->sidebar?->render() ?? '';
+        $content    = $this->renderPartialWithFallback($view, $viewData);
+        $navbarHtml = $this->navbar?->render() ?? '';
+        $sidebarHtml= $this->sidebar?->render() ?? '';
 
         $styles = array_unique(array_merge(
             $this->config['stylesPaths'],
             $this->navbar?->getStylesPaths() ?? [],
             $this->sidebar?->getStylesPaths() ?? []
+        ));
+
+        $scripts = array_unique(array_merge(
+            $this->config['scriptsPaths'],
+            $this->navbar?->getScriptsPaths() ?? [],
+            $this->sidebar?->getScriptsPaths() ?? []
         ));
 
         $layoutPath = views_path($this->config['template'] . '.php');
@@ -58,18 +69,17 @@ class Layout implements RenderableInterface
 
         ob_start();
         extract([
-            'title'         => $this->config['title'],
-            'stylesPaths'   => $styles,
-            'scriptHelpers' => $scriptHelpers,
-            'navbarHtml'    => $navbarHtml,
-            'sidebarHtml'   => $sidebarHtml,
-            'content'       => $content,
+            'title'        => $this->config['title'],
+            'stylesPaths'  => $styles,
+            'scriptsPaths' => $scripts,
+            'navbarHtml'   => $navbarHtml,
+            'sidebarHtml'  => $sidebarHtml,
+            'content'      => $content,
         ]);
         include $layoutPath;
         return ob_get_clean();
     }
-
-    private function renderPartialWithFallback(string $view, array $viewData = []): string
+   private function renderPartialWithFallback(string $view, array $viewData = []): string
     {
         $path = views_path($view . '.php');
         if (!file_exists($path)) {

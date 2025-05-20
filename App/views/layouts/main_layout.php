@@ -20,9 +20,10 @@
     </div>
 </div>
 
+<!-- jQuery and validation -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
-<!-- In your main_layout.php -->
+
 <script>
     window._AUTH_STATE = {
         isLoggedIn: <?= isLoggedIn() ? 'true' : 'false' ?>,
@@ -30,21 +31,16 @@
     };
 </script>
 
-<?php if (!empty($scriptHelpers)): ?>
+<!-- Always load orchestrator (as constant helper loader) -->
 <script type="module">
-    import { orchestrate } from '/assets/js/orchestrator.js';
-    orchestrate(<?= json_encode($scriptHelpers) ?>);
+    import { bootDynamicJsHelpers } from '/assets/js/orchestrator.js';
+    bootDynamicJsHelpers('<?= route('ietarticles.js_helpers') ?>');
 </script>
-<?php endif; ?>
 
-
-
-
+<!-- Additional scripts if provided -->
 <?php foreach ($scriptsPaths ?? [] as $jsPath): ?>
     <script src="<?= base_url($jsPath) ?>"></script>
 <?php endforeach; ?>
-
-
 
 </body>
 </html>

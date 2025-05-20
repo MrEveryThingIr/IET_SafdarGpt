@@ -1,23 +1,22 @@
-
-
-  <!-- Flash Messages -->
-  <div class="space-y-2">
+<!-- Flash Messages -->
+<div class="space-y-2">
     <?php isset($_SESSION['error']) ? errorMessage() : '' ?>
     <?php isset($_SESSION['success']) ? errorMessage() : '' ?>
-  </div>
+</div>
 
-  <?php
+<?php
 $blockTypes = ['paragraph','heading','image','audio','video','list','quote','divider','embed','cta','faq','section'];
 require views_path('articles/modal.php');
+require views_path('articles/modal_edit.php');
 require views_path('articles/display_article_blocks.php');
-
 ?>
+
 <!-- Article Body -->
 <article class="prose max-w-4xl mx-auto bg-white rounded shadow p-6 mb-8">
     <header class="mb-6">
         <h1 class="text-4xl font-bold mb-2 text-gray-900"><?= htmlspecialchars($article['title']) ?></h1>
         <div class="text-sm text-gray-500 flex items-center justify-between">
-            <span>✍️ نوشته‌شده توسط: <?= htmlspecialchars(user()['username']) ?></span>
+            <span>✍️ نوشته‌شده توسط: <?= htmlspecialchars(user($article['author_id'])['username']) ?></span>
             <span>📅 <?= htmlspecialchars(date('Y/m/d', strtotime($article['created_at']))) ?></span>
         </div>
     </header>
@@ -42,7 +41,7 @@ require views_path('articles/display_article_blocks.php');
     </div>
 </article>
 
-<!-- All Modals -->
+<!-- All Add Modals -->
 <div class="target_modal">
     <?php foreach ($blockTypes as $blockType): ?>
         <?php $modalId = 'add' . ucfirst($blockType) . 'Modal'; ?>
@@ -51,17 +50,3 @@ require views_path('articles/display_article_blocks.php');
         </div>
     <?php endforeach; ?>
 </div>
-
-
-<div class="target_modal ">
-<?php foreach ($blockTypes as $blockType): ?>
-    <?php $modalId = 'add' . ucfirst($blockType) . 'Modal'; ?>
-    <div id="<?= $modalId ?>" class="modal hidden fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
-        <?php  echo render_modal_by_type($blockType, $article['id']); ?>
-    </div>
-<?php endforeach; ?>
-
-</div>
-
-
-

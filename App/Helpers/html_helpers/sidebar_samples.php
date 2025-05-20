@@ -168,16 +168,17 @@ function articleSidebar($article): Sidebar
         '🔍'
     );
 
-    $sidebar = sidebar_add_item(
-        $sidebar,
-        ' Delete Article',
-        16,
-        route('ietchats.room.show'), // ✔️ corrected route
-        'text-red-500 hover:bg-red-600 hover:text-white',
-        '⚠️',
-        false,
-        ['onclick' => 'return confirm("Are you sure you want to delete this article?")']
-    );
+$sidebar = sidebar_add_form_item(
+    $sidebar,
+    'حذف مقاله',
+    route('ietarticles.delete_article', ['id' => $article['id']]),
+    16, // index (optional)
+    'text-red-500 hover:bg-red-600 hover:text-white',
+    '⚠️'
+);
+
+
+
 
     // Final style
     $sidebar = sidebar_set_style($sidebar, 'w-72 bg-indigo-300 text-white flex flex-col max-h-screen overflow-y-auto');

@@ -16,7 +16,7 @@ class Sidebar implements RenderableInterface
             'bodyClass'     => null,
             'listClass'     => null,
             'stylesPaths'   => [],
-            'scriptHelpers' => [],
+            'scriptPaths' => [],
             'template'      => 'templates/sidebar_template',
             'defaultItemClass' => 'block p-2 rounded hover:bg-gray-700 transition-colors duration-200',
             'defaultActiveClass' => 'bg-gray-700 font-semibold',
@@ -47,9 +47,9 @@ class Sidebar implements RenderableInterface
         return $this->config['stylesPaths'];
     }
 
-    public function getScriptHelpers(): array
+    public function getScriptsPaths(): array
     {
-        return $this->config['scriptHelpers'];
+        return $this->config['scriptPaths'];
     }
 
     public function setDefaultItemClass(string $class): self

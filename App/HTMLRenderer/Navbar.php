@@ -13,7 +13,7 @@ class Navbar implements RenderableInterface
             'brand'         => 'MyApp',
             'items'         => [],
             'stylesPaths'   => [],
-            'scriptHelpers' => [],
+            'scriptPaths' => [],
             'template'      => 'templates/navbar_template',
         ], $config);
     }
@@ -42,8 +42,8 @@ class Navbar implements RenderableInterface
         return $this->config['stylesPaths'];
     }
 
-    public function getScriptHelpers(): array
+    public function getScriptsPaths(): array
     {
-        return $this->config['scriptHelpers'];
+        return $this->config['scriptPaths'];
     }
 }

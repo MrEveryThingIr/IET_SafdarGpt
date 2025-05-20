@@ -2,7 +2,7 @@
 namespace App\Controllers;
 
 use App\Core\BaseController;
-use App\Helpers\JsonApi;
+use App\Services\JsonApi;
 use App\Models\MainCategory;
 use App\Models\SubCategory;
 use App\Services\ArticleService;
@@ -15,7 +15,10 @@ class ArticleController extends BaseController
     private $mainCateModel;
     private $subCateModel;
     private $articleService;
+    protected array $jsHelperConfig = [];
+
     public function __construct(){
+        $this->jsHelperConfig=[];
         $this->articleService=new ArticleService();
         $this->mainCateModel=new MainCategory();
         $this->subCateModel=new SubCategory();
@@ -26,7 +29,7 @@ class ArticleController extends BaseController
         $this->layout = new Layout($navbar, $sidebar, [
             'title' => 'اعلام عرضه یا تقاضا',
             'template' => 'layouts/main_layout',
-            'scriptHelpers' => [] // method-level override
+           
         ]);
     }
     public function createArticleForm(){
@@ -45,20 +48,73 @@ class ArticleController extends BaseController
         ], []);
     }
 
+public function scriptHelpers(): void
+{
+    $config = $_SESSION['js_helper_config'] ?? [];
+    unset($_SESSION['js_helper_config']);
+    JsonApi::send($config);
+}
+
 
 public function showArticle(int $id): void
 {
-    
     $article = $this->articleService->getFullArticleWithSections($id);
+    $blocks = [];
+
+    foreach ($article['structured_blocks'] ?? [] as $section) {
+        if (!empty($section['content'])) {
+            foreach ($section['content'] as $block) {
+                $blocks[] = $block;
+            }
+        } elseif (!empty($section['single_block'])) {
+            $blocks[] = $section['single_block'];
+        }
+    }
     $navbar = dashboardnavbar();
     $sidebar = isLoggedIn() ? articleSidebar($article) : null;
 
-  
+    $modalTriggers=  [
+                    ['#trigger_addParagraphModal', '#addParagraphModal'],
+                    ['#trigger_addHeadingModal', '#addHeadingModal'],
+                    ['#trigger_addImageModal', '#addImageModal'],
+                    ['#trigger_addAudioModal', '#addAudioModal'],
+                    ['#trigger_addVideoModal', '#addVideoModal'],
+                    ['#trigger_addListModal', '#addListModal'],
+                    ['#trigger_addQuoteModal', '#addQuoteModal'],
+                    ['#trigger_addDividerModal', '#addDividerModal'],
+                    ['#trigger_addEmbedModal', '#addEmbedModal'],
+                    ['#trigger_addCtaModal', '#addCtaModal'],
+                    ['#trigger_addFaqModal', '#addFaqModal'],
+                    ['#trigger_addSectionModal', '#addSectionModal']
+    ];
+
+    foreach ($blocks as $block) {
+        $modalTriggers[] = ['#editTrigger_' . $block['id'], '#editTarget_' . $block['id']];
+    }
+     $this->jsHelperConfig = [
+        'modalTriggers' => [
+            'module' => '/assets/js/helpers/modalHelper.js',
+            'method' => 'initModalGroup',
+            'args' => [
+                $modalTriggers,
+                [
+                    'loginRoute' => '/login',
+                    'hiddenClass' => 'hidden',
+                    'visibleClass' => 'block',
+                    'closeSelector' => '.close-button'
+                ]
+            ]
+        ]
+    ];
+    // ✅ persist config for JS fetch
+    $_SESSION['js_helper_config'] = $this->jsHelperConfig;
+
     $this->layout = new Layout($navbar, $sidebar, [
-        'title' => 'اعلام عرضه یا تقاضا',
+        'title' => ' مقاله'.$article['title'],
         'template' => 'layouts/main_layout',
-        'stylesPaths'=>[],
-        'scriptHelpers' => ['modalTriggers'], // <<< Important: attach modal triggers here
+        'stylesPaths' => [],
+        
+
     ]);
 
     if (!$article) {
@@ -72,6 +128,8 @@ public function showArticle(int $id): void
         'sections' => $article['structured_blocks'] ?? []
     ]);
 }
+
+
 
 public function storeArticle(): void
 {
@@ -242,6 +300,198 @@ public function storeArticleBlock(): void
 
     redirect(route('ietarticles.show_article',['id'=>$articleId]));
 }
+
+public function deleteArticle(int $id): void
+{
+    if (!isLoggedIn()) {
+        $_SESSION['error'] = 'Unauthorized access.';
+        redirect(route('auth.login'));
+        return;
+    }
+
+    try {
+        $success = $this->articleService->deleteArticle($id);
+        if ($success) {
+            $_SESSION['success'] = 'Article deleted successfully.';
+        } else {
+            $_SESSION['error'] = 'Failed to delete article.';
+        }
+    } catch (\Exception $e) {
+        $_SESSION['error'] = 'Error deleting article: ' . $e->getMessage();
+    }
+
+    redirect(route('ietarticles.all'));
+}
+
+public function deleteArticleBlock(int $id): void
+{
+    if (!isLoggedIn()) {
+        $_SESSION['error'] = 'Unauthorized access.';
+        redirect(route('auth.login'));
+        return;
+    }
+
+    try {
+        $block = $this->articleService->getBlockById($id);
+        if (!$block) {
+            $_SESSION['error'] = 'Block not found.';
+            redirect(route('ietarticles.all'));
+            return;
+        }
+
+        $articleId = $block['article_id'] ?? null;
+        $success = $this->articleService->deleteBlock($id);
+
+        if ($success) {
+            $_SESSION['success'] = 'Block deleted successfully.';
+        } else {
+            $_SESSION['error'] = 'Failed to delete block.';
+        }
+
+        redirect(route('ietarticles.show_article', ['id' => $articleId]));
+    } catch (\Exception $e) {
+        $_SESSION['error'] = 'Error deleting block: ' . $e->getMessage();
+        redirect(route('ietarticles.all'));
+    }
+}
+
+
+public function editArticle(int $id): void
+{
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        $_SESSION['error'] = 'Invalid request method.';
+        redirect(route('ietarticles.show_article', ['id' => $id]));
+        return;
+    }
+
+    if (!isset($_POST['_token']) || !csrf('verify', $_POST['_token'])) {
+        $_SESSION['error'] = 'Invalid CSRF token.';
+        redirect(route('ietarticles.show_article', ['id' => $id]));
+        return;
+    }
+
+    try {
+        $data = [
+            'title'         => trim($_POST['title'] ?? ''),
+            'slug'          => trim($_POST['slug'] ?? ''),
+            'field'         => trim($_POST['field'] ?? ''),
+            'key_words'     => trim($_POST['key_words'] ?? ''),
+            'status'        => in_array($_POST['status'] ?? '', ['draft', 'published', 'archived']) ? $_POST['status'] : 'draft',
+            'time_to_read'  => isset($_POST['time_to_read']) ? (int)$_POST['time_to_read'] : null,
+            'language_code' => trim($_POST['language_code'] ?? 'fa'),
+        ];
+
+        $success = $this->articleService->updateArticle($id, $data);
+
+        if ($success) {
+            $_SESSION['success'] = 'Article updated successfully.';
+        } else {
+            $_SESSION['error'] = 'Failed to update article.';
+        }
+    } catch (\Exception $e) {
+        $_SESSION['error'] = 'Error updating article: ' . $e->getMessage();
+    }
+
+    redirect(route('ietarticles.show_article', ['id' => $id]));
+}
+
+
+public function editArticleBlock(int $id): void
+{
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        $_SESSION['error'] = 'Invalid request method.';
+        redirect(route('ietarticles.all'));
+        return;
+    }
+
+    if (!isset($_POST['_token']) || !csrf('verify', $_POST['_token'])) {
+        $_SESSION['error'] = 'Invalid CSRF token.';
+        redirect(route('ietarticles.all'));
+        return;
+    }
+
+    try {
+        $block = $this->articleService->getBlockById($id);
+        if (!$block) {
+            $_SESSION['error'] = 'Block not found.';
+            redirect(route('ietarticles.all'));
+            return;
+        }
+
+        $articleId = $block['article_id'];
+        $blockType = $block['block_type'];
+
+        $data = [
+            'content'        => $_POST['content'] ?? null,
+            'css_class'      => $_POST['css_class'] ?? null,
+            'language_code'  => $_POST['language_code'] ?? 'en',
+        ];
+
+        // Type-specific data handling
+        switch ($blockType) {
+            case 'heading':
+                $data['heading_level'] = (int) ($_POST['heading_level'] ?? 2);
+                break;
+
+            case 'image':
+                $data['image_alt'] = $_POST['image_alt'] ?? null;
+                $data['image_caption'] = $_POST['image_caption'] ?? null;
+
+                if (!empty($_FILES['file']) && $_FILES['file']['error'] === UPLOAD_ERR_OK) {
+                    $upload = UploadFile::uploadFromArray('image', $_FILES['file']);
+                    if ($upload['success']) {
+                        $data['image_url'] = $upload['url'];
+                    } else {
+                        $_SESSION['error'] = 'Image upload failed: ' . $upload['error'];
+                        redirect(route('ietarticles.show_article', ['id' => $articleId]));
+                        return;
+                    }
+                } else {
+                    $data['image_url'] = $_POST['image_url'] ?? null;
+                }
+                break;
+
+            case 'audio':
+            case 'video':
+                if (!empty($_FILES['file']) && $_FILES['file']['error'] === UPLOAD_ERR_OK) {
+                    $upload = UploadFile::uploadFromArray($blockType, $_FILES['file']);
+                    if ($upload['success']) {
+                        $data['content'] = $upload['url'];
+                    } else {
+                        $_SESSION['error'] = ucfirst($blockType) . ' upload failed: ' . $upload['error'];
+                        redirect(route('ietarticles.show_article', ['id' => $articleId]));
+                        return;
+                    }
+                }
+                break;
+
+            case 'list':
+                $data['list_type'] = $_POST['list_type'] ?? 'unordered';
+                break;
+
+            case 'cta':
+            case 'faq':
+            case 'section':
+                $data['additional_data'] = json_encode($_POST['additional_data'] ?? []);
+                break;
+        }
+
+        $success = $this->articleService->updateBlock($id, $data);
+
+        if ($success) {
+            $_SESSION['success'] = 'Block updated successfully.';
+        } else {
+            $_SESSION['error'] = 'Failed to update block.';
+        }
+
+        redirect(route('ietarticles.show_article', ['id' => $articleId]));
+
+    } catch (\Exception $e) {
+        $_SESSION['error'] = 'Error updating block: ' . $e->getMessage();
+        redirect(route('ietarticles.all'));
+    }
+}
+
 
 
 
