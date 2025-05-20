@@ -123,22 +123,23 @@ function articleSidebar($article): Sidebar
         $meta,
         'mb-4 p-4 bg-white shadow rounded text-gray-700'
     );
+    $sidebar = sidebar_add_item($sidebar, 'بازگشت', 1, route('dashboard'), '', '📊', true);
 
     // Action Items
     $modalItems = [
-        [' Add Paragraph', 1, '#addParagraphModal', '📝'],
-        [' Add Heading', 2, '#addHeadingModal', '🔠'],
-        [' Add Image', 3, '#addImageModal', '🖼️'],
-        [' Add Audio', 4, '#addAudioModal', '🎵'],
-        [' Add Video', 5, '#addVideoModal', '🎥'],
-        [' Add List', 6, '#addListModal', '📋'],
-        [' Add Quote', 7, '#addQuoteModal', '💬'],
-        [' Add Divider', 8, '#addDividerModal', '➖'],
-        [' Add Embed', 9, '#addEmbedModal', '🌐'],
-        [' Add CTA', 10, '#addCtaModal', '📌'],
-        [' Add FAQ', 11, '#addFaqModal', '❓'],
-        [' Add Section (Heading + Paragraph)', 12, '#addSectionModal', '📚'],
-        [' Set Styles', 13, '#setStylesModal', '🎨'],
+        [' Add Paragraph', 2, '#addParagraphModal', '📝'],
+        [' Add Heading', 3, '#addHeadingModal', '🔠'],
+        [' Add Image', 4, '#addImageModal', '🖼️'],
+        [' Add Audio', 5, '#addAudioModal', '🎵'],
+        [' Add Video', 6, '#addVideoModal', '🎥'],
+        [' Add List', 7, '#addListModal', '📋'],
+        [' Add Quote', 8, '#addQuoteModal', '💬'],
+        [' Add Divider', 9, '#addDividerModal', '➖'],
+        [' Add Embed', 10, '#addEmbedModal', '🌐'],
+        [' Add CTA', 11, '#addCtaModal', '📌'],
+        [' Add FAQ', 12, '#addFaqModal', '❓'],
+        [' Add Section (Heading + Paragraph)', 13, '#addSectionModal', '📚'],
+        [' Set Styles', 14, '#setStylesModal', '🎨'],
     ];
 
  
@@ -161,7 +162,7 @@ function articleSidebar($article): Sidebar
     $sidebar = sidebar_add_item(
         $sidebar,
         ' Preview Article',
-        14,
+        15,
         route('ietchats.room.show'), // ✔️ fixed from 'all'
         '',
         '🔍'
@@ -170,7 +171,7 @@ function articleSidebar($article): Sidebar
     $sidebar = sidebar_add_item(
         $sidebar,
         ' Delete Article',
-        15,
+        16,
         route('ietchats.room.show'), // ✔️ corrected route
         'text-red-500 hover:bg-red-600 hover:text-white',
         '⚠️',

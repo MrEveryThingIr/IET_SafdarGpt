@@ -58,7 +58,9 @@ Route::post('/ietchats/rooms/send_message','ChatController@sendMessage')->name('
 
 Route::get('/ietarticles/all','ArticleController@allArticles')->name('ietarticles.all');
 Route::get('/ietarticles/create','ArticleController@createArticleForm')->name('ietarticles.create');
-Route::get('/ietarticles/block/create','ArticleController@createArticleBlockForm')->name('ietarticle.block.create');
-Route::post('/ietarticles/block/store','ArticleController@storeArticleBlock')->name('ietarticle.block.store');
-Route::get('/ietarticles/show/{id}','ArticleController@showArticle')->name('ietarticle.show_article');
-Route::post('/ietarticles/block/store','ArticleController@storeArticleBlock')->name('ietarticles.store');
+
+
+Route::get('/ietarticles/show/{id}','ArticleController@showArticle')->name('ietarticles.show_article');
+Route::post('/ietarticles/block/store','ArticleController@storeArticleBlock')->name('ietarticles.block.store');
+Route::post('/ietarticles/block/delete/{id}','ArticleController@deleteArticleBlock')->name('ietarticles.block.delete');
+Route::post('/ietarticles/store','ArticleController@storeArticle')->name('ietarticles.store');

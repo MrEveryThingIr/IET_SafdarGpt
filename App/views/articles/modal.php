@@ -118,7 +118,7 @@ function render_modal_by_type(string $blockType, int $articleId): string
     $csrfField = csrf('field');
     $articleField = '<input type="hidden" name="article_id" value="' . (int)$articleId . '">';
 
-    $formAction = route('ietarticle.block.store');
+    $formAction = route('ietarticles.block.store');
 
     return <<<HTML
     <div class="modal-content bg-white p-6 rounded shadow-lg relative w-full max-w-lg">

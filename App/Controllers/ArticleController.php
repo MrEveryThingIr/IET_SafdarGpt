@@ -2,6 +2,7 @@
 namespace App\Controllers;
 
 use App\Core\BaseController;
+use App\Helpers\JsonApi;
 use App\Models\MainCategory;
 use App\Models\SubCategory;
 use App\Services\ArticleService;
@@ -33,10 +34,7 @@ class ArticleController extends BaseController
         $this->render('articles/create_article',['categories'=>$categories],[]);
     }
 
-       public function createArticleBlockForm(){
-        
-        $this->render('articles/add_article_block',[],[]);
-    }
+
 
     public function allArticles(): void
     {
@@ -50,10 +48,12 @@ class ArticleController extends BaseController
 
 public function showArticle(int $id): void
 {
+    
     $article = $this->articleService->getFullArticleWithSections($id);
     $navbar = dashboardnavbar();
     $sidebar = isLoggedIn() ? articleSidebar($article) : null;
 
+  
     $this->layout = new Layout($navbar, $sidebar, [
         'title' => 'اعلام عرضه یا تقاضا',
         'template' => 'layouts/main_layout',
@@ -73,48 +73,71 @@ public function showArticle(int $id): void
     ]);
 }
 
-
-
-    public function storeArticle(): void
-    {
-        // Ensure it's a POST request
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $_SESSION['error'] = 'Invalid request method.';
-            redirect(route('articles.create_form'));
-            return;
-        }
-
-        // CSRF protection
-        if (!isset($_POST['_token']) || !csrf('verify', $_POST['_token'])) {
-            $_SESSION['error'] = 'Invalid CSRF token.';
-            redirect(route('articles.create_form'));
-            return;
-        }
-
-        try {
-            $data = [
-                'title'         => trim($_POST['title'] ?? ''),
-                'slug'          => trim($_POST['slug'] ?? ''),
-                'author_id'     => $_POST['author_id'] ?? ($_SESSION['user']['id'] ?? null),
-                'status'        => $_POST['status'] ?? 'draft',
-                'language_code' => $_POST['language_code'] ?? 'en',
-                'created_at'    => date('Y-m-d H:i:s'),
-            ];
-
-            if (empty($data['title']) || !$data['author_id']) {
-                $_SESSION['error'] = 'Title and author are required.';
-                redirect(route('articles.create_form'));
-                return;
-            }
-
-            $articleId = $this->articleService->createArticle($data);
-            $_SESSION['success'] = 'Article created successfully.';
-            redirect(route('articles.edit', ['id' => $articleId]));
-        } catch (\Exception $e) {
-            $_SESSION['error'] = 'Failed to create article: ' . $e->getMessage();
-            redirect(route('articles.create_form'));
-        }
+public function storeArticle(): void
+{
+    // Enforce POST method
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        $_SESSION['error'] = 'Request must be POST.';
+        redirect(route('ietarticles.create'));
+        return;
     }
+
+    // CSRF validation
+    if (!isset($_POST['_token']) || !csrf('verify', $_POST['_token'])) {
+        $_SESSION['error'] = 'Invalid CSRF token.';
+        redirect(route('ietarticles.create'));
+        return;
+    }
+
+    try {
+        // Sanitize and prepare inputs
+        $authorId = (int)($_POST['author_id'] ?? 0);
+        $title = trim($_POST['title'] ?? '');
+        $slug = trim($_POST['slug'] ?? '');
+        $field = trim($_POST['field'] ?? '');
+        $keyWords = trim($_POST['key_words'] ?? '');
+        $status = $_POST['status'] ?? 'draft';
+        $timeToRead = isset($_POST['time_to_read']) ? (int)$_POST['time_to_read'] : null;
+        $languageCode = trim($_POST['language_code'] ?? 'fa');
+
+        // Validate ENUM status
+        $allowedStatuses = ['draft', 'published', 'archived'];
+        if (!in_array($status, $allowedStatuses)) {
+            $status = 'draft';
+        }
+
+        // Prepare article data
+        $articleData = [
+            'author_id'     => $authorId,
+            'title'         => $title,
+            'slug'          => $slug ?:'',
+            'field'         => $field ?: null,
+            'key_words'     => $keyWords ?: null,
+            'status'        => $status,
+            'time_to_read'  => $timeToRead ?: null,
+            'language_code' => $languageCode ?: 'fa',
+        ];
+
+        // Store article using the service
+       
+        $articleId = $this->articleService->createArticle($articleData);
+
+        if ($articleId > 0) {
+            $_SESSION['success'] = 'Article created successfully.';
+            redirect(route('ietarticles.show_article', ['id' => $articleId]));
+        } else {
+            $_SESSION['error'] = 'Failed to create article.';
+            redirect(route('ietarticles.create', ['id' => $articleId]));
+        }
+
+    } catch (\PDOException $e) {
+        $_SESSION['error'] = 'Database error: ' . $e->getMessage();
+        redirect(route('ietarticles.create'));
+    } catch (\Exception $e) {
+        $_SESSION['error'] = 'Unexpected error: ' . $e->getMessage();
+        redirect(route('ietarticles.create'));
+    }
+}
 
 public function storeArticleBlock(): void
 {
@@ -123,21 +146,21 @@ public function storeArticleBlock(): void
     // Ensure it's a POST request
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         $_SESSION['error'] = 'Invalid request method.';
-        redirect(route('ietarticle.show_article',['id'=>$articleId]));
+        redirect(route('ietarticles.show_article',['id'=>$articleId]));
         return;
     }
 
     // CSRF protection
     if (!isset($_POST['_token']) || !csrf('verify', $_POST['_token'])) {
         $_SESSION['error'] = 'Invalid security token.';
-       redirect(route('ietarticle.show_article',['id'=>$articleId]));
+       redirect(route('ietarticles.show_article',['id'=>$articleId]));
         return;
     }
 
     // Validate required base fields
     if (empty($_POST['article_id']) || empty($_POST['block_type'])) {
         $_SESSION['error'] = 'Missing article ID or block type.';
-       redirect(route('ietarticle.show_article',['id'=>$articleId]));
+       redirect(route('ietarticles.show_article',['id'=>$articleId]));
         return;
     }
 
@@ -167,7 +190,7 @@ public function storeArticleBlock(): void
                     $data['image_url'] = $upload['url'];
                 } else {
                     $_SESSION['error'] = 'Image upload failed: ' . $upload['error'];
-                    redirect(route('ietarticle.show_article',['id'=>$articleId]));
+                    redirect(route('ietarticles.show_article',['id'=>$articleId]));
                     return;
                 }
             }
@@ -182,7 +205,7 @@ public function storeArticleBlock(): void
                     $data['content'] = $upload['url'];
                 } else {
                     $_SESSION['error'] = ucfirst($blockType) . ' upload failed: ' . $upload['error'];
-                    redirect(route('ietarticle.show_article',['id'=>$articleId]));
+                    redirect(route('ietarticles.show_article',['id'=>$articleId]));
                     return;
                 }
             }
@@ -217,7 +240,7 @@ public function storeArticleBlock(): void
         $_SESSION['error'] = 'Failed to add block: ' . $e->getMessage();
     }
 
-    redirect(route('ietarticle.show_article',['id'=>$articleId]));
+    redirect(route('ietarticles.show_article',['id'=>$articleId]));
 }
 
 

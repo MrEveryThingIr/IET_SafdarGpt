@@ -142,6 +142,7 @@ class ArticleService
         return $this->articleModel->all($limit);
     }
 
+
     /**
      * Retrieve single article by slug
      */

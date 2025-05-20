@@ -1,12 +1,21 @@
 <div class="container mx-auto px-4 py-8">
-  <h1 class="text-3xl font-bold text-gray-800 mb-8 text-center">لیست مقالات</h1>
+    <!-- Header and Create Button -->
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold text-gray-800">لیست مقالات  </h2>
+    <a href="<?php echo route('ietarticles.create') ?>" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium transition duration-150 ease-in-out transform hover:-translate-y-0.5 flex items-center gap-1">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+      </svg>
+ایجاد مقاله جدید    </a>
+  </div>
+
   
   <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
     <?php foreach ($articles as $article): ?>
     <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 border border-gray-100">
       <!-- Article Header -->
       <div class="p-5 bg-gradient-to-r from-blue-50 to-indigo-50 border-b">
-       <a href="<?php echo route('ietarticle.show_article',['id'=>$article['id']]) ?>"> <h2 class="text-xl font-bold text-gray-800 mb-2 text-right"><?= htmlspecialchars($article['title']) ?></h2></a>
+       <h2 class="text-xl font-bold text-gray-800 mb-2 text-right"><?= htmlspecialchars($article['title']) ?></h2>
         <div class="flex justify-between items-center">
           <span class="text-sm text-indigo-600 bg-indigo-50 px-2 py-1 rounded"><?= htmlspecialchars($article['field'] ?? 'بدون دسته') ?></span>
           <span class="text-xs text-gray-500"><?= date('Y/m/d', strtotime($article['created_at'])) ?></span>
@@ -52,7 +61,8 @@
       
       <!-- Footer -->
       <div class="px-5 py-3 bg-gray-50 border-t flex justify-between items-center">
-        <a href="/articles/<?= $article['slug'] ?>" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
+    
+        <a  href="<?php echo route('ietarticles.show_article',['id'=>$article['id']]) ?>" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
           مشاهده مقاله →
         </a>
         <span class="text-xs text-gray-500">ID: <?= $article['id'] ?></span>

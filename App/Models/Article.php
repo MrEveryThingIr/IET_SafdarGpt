@@ -35,7 +35,7 @@ class Article extends BaseModel
 
     public function create(array $data): int
     {
-        if (!isset($data['slug'])) {
+        if ((!isset($data['slug'])||($data['slug']===''))) {
             $data['slug'] = $this->generateSlug($data['title']);
         }
         return $this->insert($this->table, $data);
