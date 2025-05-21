@@ -56,6 +56,11 @@ class ArticleService
         return $this->articleModel->searchBy($criteria, $likeFields, $likeValue, $options);
     }
 
+    public function getArticlesByCategories(array $categoryIds): array
+    {
+        return $this->articleModel->fetchByCategories($categoryIds);
+    }
+
     public function getFullArticleWithSections(int $id): ?array
     {
         $article = $this->articleModel->getFullArticle($id);

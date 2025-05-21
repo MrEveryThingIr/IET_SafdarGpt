@@ -31,16 +31,16 @@
     <!-- Field / Category & Language -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-            <label for="field" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+             
+            <label for="field_category_id" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
             <select 
-                id="field" 
-                name="field" 
+                id="field_category_id" 
+                name="field_category_id" 
                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
                 <option value="">-- Select Category --</option>
-                <option value="programming">Programming</option>
-                <option value="web">Web</option>
-                <option value="database">Database</option>
-                <option value="design">Design</option>
+                <?php foreach ($categories as $category) :?>
+                    <option value="<?php echo $category['id'] ?>"><?php echo $category['cate_name'] ?></option>
+                <?php endforeach?>
                 <!-- Add more as needed -->
             </select>
         </div>

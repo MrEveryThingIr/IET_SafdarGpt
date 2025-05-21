@@ -152,7 +152,7 @@ public function storeArticle(): void
         $authorId = (int)($_POST['author_id'] ?? 0);
         $title = trim($_POST['title'] ?? '');
         $slug = trim($_POST['slug'] ?? '');
-        $field = trim($_POST['field'] ?? '');
+        $field_category_id = trim($_POST['field_category_id'] ?? '');
         $keyWords = trim($_POST['key_words'] ?? '');
         $status = $_POST['status'] ?? 'draft';
         $timeToRead = isset($_POST['time_to_read']) ? (int)$_POST['time_to_read'] : null;
@@ -169,7 +169,7 @@ public function storeArticle(): void
             'author_id'     => $authorId,
             'title'         => $title,
             'slug'          => $slug ?:'',
-            'field'         => $field ?: null,
+            'field_category_id'         => $field_category_id ?: null,
             'key_words'     => $keyWords ?: null,
             'status'        => $status,
             'time_to_read'  => $timeToRead ?: null,
@@ -374,7 +374,7 @@ public function editArticle(int $id): void
         $data = [
             'title'         => trim($_POST['title'] ?? ''),
             'slug'          => trim($_POST['slug'] ?? ''),
-            'field'         => trim($_POST['field'] ?? ''),
+            'field_category_id'         => trim($_POST['field_category_id'] ?? ''),
             'key_words'     => trim($_POST['key_words'] ?? ''),
             'status'        => in_array($_POST['status'] ?? '', ['draft', 'published', 'archived']) ? $_POST['status'] : 'draft',
             'time_to_read'  => isset($_POST['time_to_read']) ? (int)$_POST['time_to_read'] : null,

@@ -9,7 +9,7 @@
 ایجاد مقاله جدید    </a>
   </div>
 
-  
+  <?php if(!empty($articles)): ?>
   <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
     <?php foreach ($articles as $article): ?>
     <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 border border-gray-100">
@@ -69,6 +69,14 @@
       </div>
     </div>
     <?php endforeach; ?>
+
+        <?php else: ?>
+
+        <div class="p-8 bg-white border text-center">
+        <p class="text-gray-500">No categories found. Create your first one!</p>
+      </div>
+    
+    <?php endif; ?>
   </div>
 </div>
 

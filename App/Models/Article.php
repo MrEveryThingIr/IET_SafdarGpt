@@ -15,7 +15,7 @@ class Article extends BaseModel
             `author_id` INT NOT NULL,
             `title` VARCHAR(255) NOT NULL,
             `slug` VARCHAR(255) UNIQUE NOT NULL,
-            `field` VARCHAR(100) DEFAULT NULL COMMENT 'Category or field',
+            `field_category_id` INT UNSIGNED DEFAULT NULL,
             `key_words` VARCHAR(255) DEFAULT NULL,
             `status` ENUM('draft', 'published', 'archived') DEFAULT 'draft',
             `time_to_read` SMALLINT UNSIGNED DEFAULT NULL,
@@ -27,6 +27,11 @@ class Article extends BaseModel
                 FOREIGN KEY (`author_id`) 
                 REFERENCES `users` (`id`)
                 ON DELETE CASCADE
+                ON UPDATE CASCADE,
+            CONSTRAINT `fk_{$this->table}_field`
+                FOREIGN KEY (`field_category_id`) 
+                REFERENCES `sub_categories` (`id`)
+                ON DELETE CASCADE
                 ON UPDATE CASCADE
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
 
@@ -35,7 +40,7 @@ class Article extends BaseModel
 
     public function create(array $data): int
     {
-        if ((!isset($data['slug'])||($data['slug']===''))) {
+        if (!isset($data['slug']) || $data['slug'] === '') {
             $data['slug'] = $this->generateSlug($data['title']);
         }
         return $this->insert($this->table, $data);
@@ -70,7 +75,7 @@ class Article extends BaseModel
         return $this->search($this->table, ['deleted_at' => null], [], '', [
             'order_by' => 'created_at',
             'order_dir' => 'DESC',
-            'limit'=> (int)$limit
+            'limit' => (int)$limit
         ]);
     }
 
@@ -88,11 +93,28 @@ class Article extends BaseModel
     }
 
     public function searchBy(array $criteria = [], array $likeFields = [], string $likeValue = '', array $options = []): array|int
-{
-    $criteria['deleted_at'] = null;
-    return $this->search($this->table, $criteria, $likeFields, $likeValue, $options);
-}
+    {
+        $criteria['deleted_at'] = null;
+        return $this->search($this->table, $criteria, $likeFields, $likeValue, $options);
+    }
 
+    public function fetchByCategories(array $categoryIds): array
+    {
+        if (empty($categoryIds)) {
+            return [];
+        }
+
+        $placeholders = implode(',', array_fill(0, count($categoryIds), '?'));
+        $sql = "SELECT * FROM `{$this->table}` 
+                WHERE `field_category_id` IN ($placeholders)
+                AND `deleted_at` IS NULL
+                ORDER BY `created_at` DESC";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($categoryIds);
+
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
 
     private function generateSlug(string $title): string
     {

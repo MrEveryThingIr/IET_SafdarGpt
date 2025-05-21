@@ -1,9 +1,6 @@
 <?php
 declare(strict_types=1);
 namespace App\Controllers;
-
-require_once base_path('data/navbars/dashboard.php');
-require_once base_path('data/sidebars/dashboard.php');
 use App\Core\BaseController;
 use App\HTMLRenderer\Layout;
 use App\Models\User;
@@ -20,7 +17,7 @@ class AuthController extends BaseController
         $this->layout = new Layout($navbar, $sidebar = null, [
             'title' => 'خانه',
             'template' => 'layouts/main_layout',
-            'scriptHelpers' => []
+            
         ]);
     } 
     
