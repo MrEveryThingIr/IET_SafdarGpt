@@ -17,6 +17,8 @@ class AuthController extends BaseController
         $this->layout = new Layout($navbar, $sidebar = null, [
             'title' => 'خانه',
             'template' => 'layouts/main_layout',
+            'stylesPaths'=>['assets/css/moving_time.css'],
+            'scriptsPaths'=>['assets/js/temporary/movingtime.js']
             
         ]);
     } 
@@ -29,10 +31,26 @@ class AuthController extends BaseController
         redirect(route('ietannounce.filtered'));
     }
 
-    public function home(){
+public function home()
+{
+    $this->jsHelperConfig = [
+        'clockDisplay' => [
+            'module' => '/assets/js/helpers/clockHelper.js',
+            'method' => 'initClockDisplay',
+            'args' => [
+                '#liveClock',
+                [
+                    'showLabels' => true
+                ]
+            ]
+        ]
+    ];
 
-        $this->render('home',[],[]);
-    }
+    $_SESSION['js_helper_config'] = $this->jsHelperConfig;
+
+    $this->render('home', [], []);
+}
+
     public function showRegisterForm(): void
     {
         echo $this->render('auth/register',[]);

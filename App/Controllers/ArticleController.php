@@ -15,10 +15,10 @@ class ArticleController extends BaseController
     private $mainCateModel;
     private $subCateModel;
     private $articleService;
-    protected array $jsHelperConfig = [];
+  
 
     public function __construct(){
-        $this->jsHelperConfig=[];
+      
         $this->articleService=new ArticleService();
         $this->mainCateModel=new MainCategory();
         $this->subCateModel=new SubCategory();
@@ -48,12 +48,6 @@ class ArticleController extends BaseController
         ], []);
     }
 
-public function scriptHelpers(): void
-{
-    $config = $_SESSION['js_helper_config'] ?? [];
-    unset($_SESSION['js_helper_config']);
-    JsonApi::send($config);
-}
 
 
 public function showArticle(int $id): void

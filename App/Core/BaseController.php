@@ -4,9 +4,11 @@ declare(strict_types=1);
 namespace App\Core;
 
 use App\HTMLRenderer\Layout;
-
+use App\Services\JsonApi;
 abstract class BaseController
 {
+      protected array $jsHelperConfig = [];
+ 
     protected ?Layout $layout = null;
 
     protected function getLayout(): Layout
@@ -15,6 +17,7 @@ abstract class BaseController
             $this->layout = new Layout();
         }
         return $this->layout;
+        
     }
 
     protected function render(string $view, array $viewData = [], array $scriptHelpers = []): void
@@ -30,4 +33,12 @@ abstract class BaseController
             'scriptHelpers'  => $mergedHelpers,
         ]);
     }
+
+    public function scriptHelpers(): void
+{
+    $config = $_SESSION['js_helper_config'] ?? [];
+    unset($_SESSION['js_helper_config']);
+    JsonApi::send($config);
+}
+
 }
