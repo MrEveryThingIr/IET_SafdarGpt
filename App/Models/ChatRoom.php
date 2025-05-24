@@ -72,4 +72,16 @@ class ChatRoom extends BaseModel
         return $result[0]['total'] ?? 0;
     }
 
+    public function getRoomsByCreatorId(int $userId): array
+{
+    $sql = "SELECT * FROM `{$this->table}` 
+            WHERE `creator_id` = :user_id
+            ORDER BY `created_at` DESC";
+
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute(['user_id' => $userId]);
+    return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+}
+
+
 }

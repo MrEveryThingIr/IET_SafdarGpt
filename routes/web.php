@@ -15,8 +15,8 @@ Route::post('/auth/logout', 'AuthController@logout')->name('auth.logout');
 Route::get('/dashboard', 'AuthController@dashboard')->name('dashboard');
 
 // IETAnnounces
-Route::get('/ietannounce/create', 'IETAnnounceController@create')->name('ietannounce.create');
-Route::post('/ietannounce/create', 'IETAnnounceController@store')->name('ietannounce.store');
+Route::get('/ietannounce/create/{sd}', 'IETAnnounceController@create')->name('ietannounce.create');
+Route::post('/ietannounce/create/{sd}', 'IETAnnounceController@store')->name('ietannounce.store');
 
 Route::get('/ietannounce/mine', 'IETAnnounceController@mine')->name('ietannounce.mine');
 Route::get('/ietannounce/show/{id}', 'IETAnnounceController@show')->name('ietannounce.show');
@@ -59,8 +59,8 @@ Route::post('/ietchats/rooms/send_message','ChatController@sendMessage')->name('
 Route::get('/ietarticles/all','ArticleController@allArticles')->name('ietarticles.all');
 Route::get('/ietarticles/create','ArticleController@createArticleForm')->name('ietarticles.create');
 
-Route::get('/ietarticles/jsonApi/js-helpers-configs', 'ArticleController@scriptHelpers')
-    ->name('ietarticles.js_helpers');
+Route::get('/jsonApi/js-helpers-configs', 'IETAnnounceController@scriptHelpers')
+    ->name('jsonApi.js_helpers');
 Route::post('/ietarticles/edit/{id}','ArticleController@editArticleBlock')->name('ietarticles.block.update');
 Route::post('/ietarticles/delete/{id}','ArticleController@deleteArticle')->name('ietarticles.delete_article');
 Route::get('/ietarticles/show/{id}','ArticleController@showArticle')->name('ietarticles.show_article');

@@ -61,6 +61,11 @@ class ArticleService
         return $this->articleModel->fetchByCategories($categoryIds);
     }
 
+    public function getArticlesOfAUserId($user_id){
+        $user_articles=$this->articleModel->getByAuthorId($user_id);
+        return $user_articles;
+    }
+
     public function getFullArticleWithSections(int $id): ?array
     {
         $article = $this->articleModel->getFullArticle($id);

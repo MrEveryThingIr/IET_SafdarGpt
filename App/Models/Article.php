@@ -51,6 +51,10 @@ class Article extends BaseModel
         return $this->fetchById($this->table, $id);
     }
 
+    public function getByAuthurId(){
+        
+    }
+
     public function findBySlug(string $slug): ?array
     {
         $results = $this->search($this->table, ['slug' => $slug], [], '', [
@@ -120,4 +124,19 @@ class Article extends BaseModel
     {
         return strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $title), '-'));
     }
+
+    public function getByAuthorId(int $authorId): array
+{
+    $sql = "SELECT * FROM `{$this->table}` 
+            WHERE `author_id` = :author_id 
+              AND `deleted_at` IS NULL
+            ORDER BY `created_at` DESC";
+
+    $stmt = $this->db->prepare($sql);
+    $stmt->bindValue(':author_id', $authorId, \PDO::PARAM_INT);
+    $stmt->execute();
+
+    return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+}
+
 }

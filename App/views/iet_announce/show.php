@@ -1,5 +1,19 @@
+<?php
+// Helper: Translate ENUMs to Persian
+function translateType($type, $context) {
+    if ($context === 'supply_demand') {
+        return $type === 'supply' ? 'عرضه' : 'تقاضا';
+    }
+    if ($context === 'goods_services') {
+        return $type === 'goods' ? 'کالا' : 'خدمات';
+    }
+    return $type;
+}
+?>
+
 <div class="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-md" dir="rtl">
-  <!-- Announcement Header -->
+
+  <!-- Header -->
   <div class="mb-6">
     <h1 class="text-3xl font-bold text-gray-800 mb-2"><?= htmlspecialchars($announce['title']) ?></h1>
     <div class="flex items-center gap-2 text-gray-500">
@@ -7,42 +21,66 @@
     </div>
   </div>
 
-  <!-- Announcement Details -->
+  <!-- Grid Info -->
   <div class="grid gap-4 md:grid-cols-2 mb-8">
     <div class="space-y-4">
       <div class="bg-blue-50 p-4 rounded-lg">
         <h3 class="font-semibold text-blue-800 mb-2">دسته‌بندی</h3>
-        <p class="text-gray-700"><?= htmlspecialchars($announce['category']) ?></p>
+        <p class="text-gray-700"><?= htmlspecialchars($announce['category'] ?? '---') ?></p>
       </div>
-      
+
       <div class="bg-green-50 p-4 rounded-lg">
-        <h3 class="font-semibold text-green-800 mb-2">نوع درخواست</h3>
-        <p class="text-gray-700"><?= htmlspecialchars($announce['supply_demand']) ?> / <?= htmlspecialchars($announce['goods_services']) ?></p>
+        <h3 class="font-semibold text-green-800 mb-2">نوع</h3>
+        <p class="text-gray-700">
+          <?= translateType($announce['supply_demand'], 'supply_demand') ?> /
+          <?= translateType($announce['goods_services'], 'goods_services') ?>
+        </p>
+      </div>
+
+      <div class="bg-yellow-50 p-4 rounded-lg">
+        <h3 class="font-semibold text-yellow-800 mb-2">محدوده مکانی</h3>
+        <p class="text-gray-700"><?= htmlspecialchars($announce['location_limit'] ?? '---') ?></p>
+      </div>
+
+      <div class="bg-gray-50 p-4 rounded-lg">
+        <h3 class="font-semibold text-gray-800 mb-2">واحد</h3>
+        <p class="text-gray-700"><?= htmlspecialchars($announce['unit']) ?></p>
       </div>
     </div>
-    
+
     <div class="space-y-4">
       <div class="bg-purple-50 p-4 rounded-lg">
         <h3 class="font-semibold text-purple-800 mb-2">قیمت پیشنهادی</h3>
-        <p class="text-gray-700"><?= number_format(htmlspecialchars($announce['initial_suggested_price'])) ?> تومان</p>
+        <p class="text-gray-700">
+          <?= is_numeric($announce['initial_suggested_price']) ? number_format((float) $announce['initial_suggested_price']) . ' تومان' : '---' ?>
+        </p>
       </div>
-      
-      <div class="bg-yellow-50 p-4 rounded-lg">
-        <h3 class="font-semibold text-yellow-800 mb-2">محدوده مکانی</h3>
-        <p class="text-gray-700"><?= htmlspecialchars($announce['location_limit']) ?></p>
-      </div>
+
+      <?php if (!empty($announce['start_date'])): ?>
+        <div class="bg-blue-100 p-4 rounded-lg">
+          <h3 class="font-semibold text-blue-900 mb-2">تاریخ شروع</h3>
+          <p class="text-gray-700"><?= date('Y/m/d H:i', strtotime($announce['start_date'])) ?></p>
+        </div>
+      <?php endif; ?>
+
+      <?php if (!empty($announce['end_date'])): ?>
+        <div class="bg-red-100 p-4 rounded-lg">
+          <h3 class="font-semibold text-red-900 mb-2">تاریخ پایان</h3>
+          <p class="text-gray-700"><?= date('Y/m/d H:i', strtotime($announce['end_date'])) ?></p>
+        </div>
+      <?php endif; ?>
     </div>
   </div>
 
   <!-- Description -->
   <div class="mb-8">
     <h3 class="text-xl font-semibold text-gray-800 mb-3">توضیحات</h3>
-    <div class="bg-gray-50 p-4 rounded-lg prose max-w-none">
+    <div class="bg-gray-50 p-4 rounded-lg prose max-w-none leading-relaxed text-gray-700">
       <?= nl2br(htmlspecialchars($announce['description'])) ?>
     </div>
   </div>
 
-  <!-- Media Gallery -->
+  <!-- Media -->
   <?php if (!empty($announce['media_paths'])): ?>
     <div class="mb-8">
       <h3 class="text-xl font-semibold text-gray-800 mb-4">گالری رسانه</h3>
@@ -62,19 +100,19 @@
 
   <!-- Flash Messages -->
   <div class="space-y-3 mb-6">
-    <?php if (isset($_SESSION['success'])): ?>
+    <?php if (!empty($_SESSION['success'])): ?>
       <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded">
         <?= $_SESSION['success'] ?>
       </div>
     <?php endif; ?>
-    
-    <?php if (isset($_SESSION['error'])): ?>
+
+    <?php if (!empty($_SESSION['error'])): ?>
       <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded">
         <?= $_SESSION['error'] ?>
       </div>
     <?php endif; ?>
-    
-    <?php 
+
+    <?php
       $_SESSION['success'] = null;
       $_SESSION['error'] = null;
     ?>
@@ -85,7 +123,7 @@
     <?php include views_path('iet_announce/comments/create.php'); ?>
   </div>
 
-  <!-- Comments Section -->
+  <!-- Comments -->
   <div class="border-t pt-8">
     <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -99,26 +137,24 @@
         <?php foreach ($comments as $comment): ?>
           <?php
             $commentor_id = $comment['commentor_id'];
-            $commentor = (new App\Models\IETAnnounceComment())->fetchCommentor($commentor_id, 'username'); 
-            $commentor_img = (new App\Models\IETAnnounceComment())->fetchCommentor($commentor_id, 'img'); 
+            $commentModel = new \App\Models\IETAnnounceComment();
+            $commentor = $commentModel->fetchCommentor($commentor_id, 'username');
+            $commentor_img = $commentModel->fetchCommentor($commentor_id, 'img');
           ?>
-          
           <div class="bg-white rounded-xl shadow-sm p-5 border border-gray-100 hover:shadow-md transition-shadow">
             <div class="flex gap-4">
               <div class="flex-shrink-0">
                 <img src="<?= $commentor_img ?>" alt="User avatar" class="w-12 h-12 rounded-full object-cover border-2 border-blue-100">
               </div>
-              
               <div class="flex-1">
                 <div class="flex items-center justify-between mb-2">
                   <a href="<?= route('user.profile', ['user_id' => $commentor_id, 'feature' => 'identification']) ?>" class="font-medium text-blue-600 hover:text-blue-800">
-                    <?= $commentor ?>
+                    <?= htmlspecialchars($commentor) ?>
                   </a>
                   <span class="text-xs text-gray-500">
                     <?= date('Y/m/d H:i', strtotime($comment['created_at'])) ?>
                   </span>
                 </div>
-                
                 <div class="prose prose-sm text-gray-700">
                   <?= nl2br(htmlspecialchars($comment['comment'])) ?>
                 </div>
@@ -132,7 +168,7 @@
         <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
         </svg>
-        <h3 class="mt-3 text-gray-600 font-medium">هنوز نظری ثبت نشده است</h3>
+        <h3 class="mt-3 text-gray-600 font-medium">هیچ نظری ثبت نشده است</h3>
         <p class="text-gray-500 mt-1">اولین نفری باشید که نظر می‌دهد</p>
       </div>
     <?php endif; ?>

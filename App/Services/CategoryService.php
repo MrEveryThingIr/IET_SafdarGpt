@@ -86,33 +86,7 @@ class CategoryService
         return $mainCategory;
     }
 
-    // Statistics Operations
-    public function getCategoryStatistics(): array
-    {
-        return [
-            'total_main_categories' => count($this->mainCategory->all()),
-            'total_sub_categories' => count($this->subCategory->all()),
-            'main_categories_with_most_sub_categories' => $this->getMainCategoriesWithMostSubCategories(),
-        ];
-    }
 
-    public function getMainCategoriesWithMostSubCategories(int $limit = 5): array
-    {
-        return $this->mainCategory->getMainCategoriesWithMostSubCategories($limit);
-    }
-
-    // Search Operations
-    // public function searchMainCategories(string $term): array
-    // {
-    //     // Assuming your BaseModel has a search method
-    //     return $this->mainCategory->search(['cate_name', 'description'], $term);
-    // }
-
-    // public function searchSubCategories(string $term): array
-    // {
-    //     // Assuming your BaseModel has a search method
-    //     return $this->subCategory->search(['cate_name', 'key_words', 'description'], $term);
-    // }
 
     // Bulk Operations
     public function bulkCreateSubCategories(int $mainCategoryId, array $subCategories): array
@@ -155,4 +129,33 @@ class CategoryService
 
         return $errors;
     }
+
+
+    public function findOrCreateSubCategory(string $name, int $defaultMainCategoryId = 1): int
+{
+    // Sanitize name
+    $name = trim($name);
+
+    // Try to find the subcategory
+    $subCategory = $this->subCategory->findByName($name);
+
+    if ($subCategory) {
+        return (int) $subCategory['id'];
+    }
+
+    // If not found, create with default main category
+    $newId = $this->subCategory->create([
+        'main_cate_id' => $defaultMainCategoryId,
+        'cate_name' => $name,
+    ]);
+
+    return $newId;
+}
+
+    public function findMainSubCateBySubId($id)
+{
+    $cateNames = $this->subCategory->findSubAndMainNameWithSubID($id);
+    return $cateNames;
+}
+
 }

@@ -91,4 +91,18 @@ class ChatInvitee extends BaseModel
         ]);
         return $stmt->fetchColumn() > 0;
     }
+
+    public function getRoomsUserIsInvitedTo(int $userId): array
+{
+    $sql = "SELECT r.* 
+            FROM `chat_rooms` r
+            INNER JOIN `chat_invitees` i ON r.id = i.to_chatroom_id
+            WHERE i.invited_user_id = :user_id
+            ORDER BY r.created_at DESC";
+
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute(['user_id' => $userId]);
+    return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+}
+
 }

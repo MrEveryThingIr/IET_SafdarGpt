@@ -34,12 +34,26 @@
 <!-- Always load orchestrator (as constant helper loader) -->
 <script type="module">
     import { bootDynamicJsHelpers } from '/assets/js/orchestrator.js';
-    bootDynamicJsHelpers('<?= route('ietarticles.js_helpers') ?>');
+    bootDynamicJsHelpers('<?= route('jsonApi.js_helpers') ?>');
 </script>
 
-<!-- Additional scripts if provided -->
-<?php foreach ($scriptsPaths ?? [] as $jsPath): ?>
-    <script src="<?= base_url($jsPath) ?>"></script>
+<!-- Load scripts (classic and module) -->
+<?php foreach ($scriptsPaths ?? [] as $script): ?>
+    <?php
+        $src = '';
+        $type = '';
+
+        if (is_array($script)) {
+            $src = $script['src'] ?? '';
+            $type = $script['type'] ?? '';
+        } else {
+            $src = $script;
+        }
+
+        if ($src):
+    ?>
+        <script <?= $type === 'module' ? 'type="module"' : '' ?> src="<?= base_url($src) ?>"></script>
+    <?php endif; ?>
 <?php endforeach; ?>
 
 </body>

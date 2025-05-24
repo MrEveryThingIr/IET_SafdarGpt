@@ -7,7 +7,8 @@ $helperFiles = [
     __DIR__.'/html_helpers/navbar_helpers.php',
     __DIR__.'/html_helpers/sidebar_helpers.php',
     __DIR__.'/html_helpers/sidebar_samples.php',
-    __DIR__.'/session_helpers.php'
+    __DIR__.'/session_helpers.php',
+    __DIR__.'/auth/auth.php',
 ];
 
 

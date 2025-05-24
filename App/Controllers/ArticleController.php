@@ -24,7 +24,7 @@ class ArticleController extends BaseController
         $this->subCateModel=new SubCategory();
         $this->categoryService=new CategoryService($this->mainCateModel,$this->subCateModel);
                      $navbar =dashboardnavbar();
-         $sidebar = isLoggedIn()?dashboardsidebar():null;
+         $sidebar = isLoggedIn()?profileSidebar():null;
 
         $this->layout = new Layout($navbar, $sidebar, [
             'title' => 'اعلام عرضه یا تقاضا',

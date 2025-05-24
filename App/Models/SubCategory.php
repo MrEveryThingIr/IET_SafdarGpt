@@ -77,4 +77,43 @@ public function getStatsByMainCategory(int $mainCategoryId): array
     return $this->db->prepare($sql)->fetch(\PDO::FETCH_ASSOC);
 }
 
+public function findByName(string $name): ?array
+{
+    $sql = "SELECT * FROM {$this->table} WHERE cate_name = :name LIMIT 1";
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute(['name' => $name]);
+    $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+    return $result ?: null;
+}
+
+public function findSubAndMainNameWithSubID($id) {
+    // Ensure $id is properly sanitized before use to prevent SQL injection
+    $id = intval($id);
+
+    $sql = "SELECT 
+                {$this->table}.cate_name AS sub_category_name, 
+                main_categories.cate_name AS main_category_name 
+            FROM 
+                {$this->table} 
+            JOIN 
+                main_categories 
+            ON 
+                {$this->table}.main_cate_id = main_categories.id 
+            WHERE 
+                {$this->table}.id = :id";
+
+    // Prepare the SQL query
+    $stmt = $this->db->prepare($sql);
+    
+    // Bind the ID parameter
+    $stmt->bindParam(':id', $id, \PDO::PARAM_INT);
+
+    // Execute the query
+    $stmt->execute();
+
+    // Fetch the result
+    return $stmt->fetch(\PDO::FETCH_ASSOC);
+}
+
 }

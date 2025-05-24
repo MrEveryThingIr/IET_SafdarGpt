@@ -153,4 +153,24 @@ class ChatService
     return $this->inviteesModel->isUserAlreadyInvited($userId, $roomId);
 }
 
+/**
+ * Fetches all chatrooms a user is involved in:
+ * - As the creator
+ * - As an invitee
+ *
+ * @param int $userId
+ * @return array ['chatrooms_created' => [], 'chatrooms_joined' => []]
+ */
+public function getChatRoomsByUser(int $userId): array
+{
+    $createdRooms = $this->chatRoomModel->getRoomsByCreatorId($userId);
+    $joinedRooms = $this->inviteesModel->getRoomsUserIsInvitedTo($userId);
+
+    return [
+        'chatrooms_created' => $createdRooms,
+        'chatrooms_joined'  => $joinedRooms
+    ];
+}
+
+
 }

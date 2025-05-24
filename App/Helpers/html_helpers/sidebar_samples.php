@@ -45,7 +45,7 @@ function chatroomSidebar($members_list=[]){
         'mb-4 p-4 bg-blue-100 rounded text-gray-800'
     );
     
-    $sidebar = sidebar_add_item($sidebar, 'بازگشت', 1, route('dashboard'), '', '📊', true);
+    $sidebar = sidebar_add_item($sidebar, 'بازگشت', 1, route('user.profile',['feature'=>'my_chatrooms','user_id'=>user()['id']]), '', '📊', true);
     foreach($members_list as $member){
         
     $sidebar = sidebar_add_item($sidebar, user($member['invited_user_id'])['username'], null, '#', '', '📊');
@@ -123,7 +123,7 @@ function articleSidebar($article): Sidebar
         $meta,
         'mb-4 p-4 bg-white shadow rounded text-gray-700'
     );
-    $sidebar = sidebar_add_item($sidebar, 'بازگشت', 1, route('dashboard'), '', '📊', true);
+    $sidebar = sidebar_add_item($sidebar, 'بازگشت', 1, route('user.profile',['feature'=>'my_articles','user_id'=>user()['id']]), '', '📊', true);
 
     // Action Items
     $modalItems = [
@@ -179,6 +179,74 @@ $sidebar = sidebar_add_form_item(
 
 
 
+
+    // Final style
+    $sidebar = sidebar_set_style($sidebar, 'w-72 bg-indigo-300 text-white flex flex-col max-h-screen overflow-y-auto');
+
+    return new Sidebar($sidebar);
+}
+
+
+
+function profileSidebar(): Sidebar
+{
+    if (!isLoggedIn()) {
+        return home_sidebar(); // fallback for unauthorized users
+    }
+
+    $user = user();
+    $sidebar = [];
+
+    // Sidebar Header
+    $meta = implode('<br>', [
+        '👤 ' . htmlspecialchars($user['full_name'] ?? 'User'),
+        '📧 ' . htmlspecialchars($user['email'] ?? 'No email'),
+        '🕒 Last Login: ' . htmlspecialchars($user['last_login'] ?? 'Unknown')
+    ]);
+
+    $sidebar = sidebar_add_header(
+        $sidebar,
+        $user,
+        $user['balance'] ?? '0',
+        $meta,
+        'mb-4 p-4 bg-white shadow rounded text-gray-700'
+    );
+
+    // Back button
+    $sidebar = sidebar_add_item(
+        $sidebar,
+        'بازگشت', // Back
+        1,
+        route('dashboard'),
+        '',
+        '🔙',
+        true
+    );
+
+    // Profile-related Items
+    $profileItems = [
+        ['مشخصات فردی', 2, route('user.profile',['feature'=>'identification','user_id'=>user()['id']]), '📋'],
+        // ['مشخصات تحصیلی', 3,'#', '🎓'],
+        // ['مشخصات شغلی', 4, '#', '💼'],
+        ['عرضه های من', 5,  route('user.profile',['feature'=>'my_supplies','user_id'=>user()['id']]), '📌'],
+        ['تقاضاهای من', 6, route('user.profile',['feature'=>'my_demands','user_id'=>user()['id']]), '🛠️'],
+        // ['علاقمندیهای من', 7, '#', '❤️'],
+        ['مقاله‌های من', 8, route('user.profile',['feature'=>'my_articles','user_id'=>user()['id']]), '📄'],
+        ['گروهها و گفتگوهای من', 9, route('user.profile',['feature'=>'my_chatrooms','user_id'=>user()['id']]), '📄'],
+        ['دسته بندیهای من', 10, route('ietcategories.all'), '📄'],
+    ];
+
+    foreach ($profileItems as [$label, $index, $href, $icon]) {
+        $sidebar = sidebar_add_item(
+            $sidebar,
+            $label,
+            $index,
+            $href,
+            '',
+            $icon,
+            false
+        );
+    }
 
     // Final style
     $sidebar = sidebar_set_style($sidebar, 'w-72 bg-indigo-300 text-white flex flex-col max-h-screen overflow-y-auto');

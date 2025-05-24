@@ -22,8 +22,7 @@ require views_path('articles/display_article_blocks.php');
     </header>
 
     <div class="border-t border-gray-200 pt-6">
-        <p class="text-gray-700 text-lg leading-relaxed mb-6">Hello World!</p>
-
+     
         <!-- Render Structured Sections -->
         <?php foreach ($sections as $section): ?>
             <?php if (isset($section['heading'])): ?>
