@@ -4,7 +4,7 @@ namespace App\Models;
 use App\Core\BaseModel;
 
 class RecoverPassword extends BaseModel {
-    protected string $table = 'password_resets';
+    protected string $table = 'recover_passwords';
     public $id, $user_id, $token, $expiry, $created_at;
 
     /**

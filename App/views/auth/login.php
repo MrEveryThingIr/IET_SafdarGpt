@@ -1,3 +1,8 @@
+  <!-- Flash Messages -->
+  <div class="space-y-2">
+    <?php isset($_SESSION['error']) ? errorMessage() : '' ?>
+    <?php isset($_SESSION['success']) ? errorMessage() : '' ?>
+  </div>
 <form method="POST" action="<?= htmlspecialchars(route('auth.login.post'), ENT_QUOTES, 'UTF-8') ?>" 
       class="max-w-md mx-auto mt-10 bg-white p-8 rounded-lg shadow-lg border border-gray-100">
     <?= csrf('field') ?>
@@ -25,7 +30,7 @@
             ]) ?>
             
             <div class="flex justify-end mt-2">
-                <a href="<?= htmlspecialchars(route('auth.email.send_recoverpass_email_form'), ENT_QUOTES, 'UTF-8') ?>" 
+                <a href="<?= htmlspecialchars(route('recoverpass.requestform'), ENT_QUOTES, 'UTF-8') ?>" 
                    class="text-sm text-green-600 hover:text-green-700 hover:underline transition-colors">
                     Forgot Password?
                 </a>

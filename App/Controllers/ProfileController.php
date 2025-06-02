@@ -140,6 +140,57 @@ case 'my_chatrooms':
     $this->render('auth/profile/center', ['feature' => $feature, 'data' => $data], []);
 }
 
+   public function showChangePasswordForm(): void
+    {
+        if (!isLoggedIn()) {
+            redirect(route('auth.login'));
+        }
 
+        echo $this->render('auth/profile/change_password');
+    }
+
+    public function changePassword(): void
+    {
+        try {
+            if (!csrf('verify', $_POST['_token'] ?? null)) {
+                throw new \RuntimeException('Invalid CSRF token.');
+            }
+
+            $userId = $_SESSION['user_id'] ?? null;
+            $currentPassword = $_POST['current_password'] ?? '';
+            $newPassword = $_POST['password'] ?? '';
+            $confirmPassword = $_POST['confirm_password'] ?? '';
+
+            if (!$userId || empty($currentPassword) || empty($newPassword) || empty($confirmPassword)) {
+                throw new \InvalidArgumentException('All fields are required.');
+            }
+
+            if ($newPassword !== $confirmPassword) {
+                throw new \InvalidArgumentException('Passwords do not match.');
+            }
+
+            if (strlen($newPassword) < 8) {
+                throw new \InvalidArgumentException('New password must be at least 8 characters.');
+            }
+
+            $userModel = new User();
+            $userModel->id=$userId;
+            $user = $userModel->fetchUserById();
+
+            if (!$user || !password_verify($currentPassword, $user['password'])) {
+                throw new \RuntimeException('Current password is incorrect.');
+            }
+
+            $hashedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
+            $userModel->updatePassword($userId, $hashedPassword);
+
+            $_SESSION['success'] = 'Your password has been updated.';
+            redirect(route('dashboard'));
+        } catch (\Exception $e) {
+            error_log("Change password error: " . $e->getMessage());
+            $_SESSION['error'] = $e->getMessage();
+            redirect(route('auth.change_password'));
+        }
+    }
 
 }

@@ -22,7 +22,7 @@ $selectors = [
     'uploadLabel' => 'upload-label', // Upload label/area  - class
 ];
 ?>
-
+<a href="<?php echo route('profile.change_password') ?>"></a>---------->embed this link professionally in this page at the best place with best practices
 <?php
  $user_data=$data['user_info'] ;
  $userAge=$data['userAge'];   
@@ -80,6 +80,15 @@ $selectors = [
                             </div>
                         </div>
                     </div>
+
+                        <!-- Change Password Link -->
+    <div class="mt-6 text-center">
+        <a href="<?= route('profile.change_password') ?>"
+           class="inline-flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-800 transition duration-200">
+            <i class="fas fa-lock mr-1"></i>
+            تغییر گذرواژه
+        </a>
+    </div>
                 </div>
 
                 <!-- Main Profile Content -->

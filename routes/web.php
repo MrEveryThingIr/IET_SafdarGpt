@@ -13,8 +13,36 @@ Route::post('/auth/login', 'AuthController@login')->name('auth.login.post');
 
 Route::post('/auth/logout', 'AuthController@logout')->name('auth.logout');
 
-Route::post('/auth/email/send_recoverpass_email','RecoverPasswordController@sendEmail')->name('auth.recoverpass.send_email');
-Route::get('/auth/email/send_recoverpass_email_form','RecoverPasswordController@sendEmailForm')->name('auth.email.send_recoverpass_email_form');
+// === Forgot Password Flow (Guest) ===
+
+// Show the password reset request form (email input)
+Route::get('/recoverpassword/requestform', 'RecoverPasswordController@showRequestForm')
+    ->name('recoverpass.requestform');
+
+// Handle submission of password reset request
+Route::post('/recoverpassword', 'RecoverPasswordController@requestRecoverPassword')
+    ->name('recoverpassword.request');
+
+// Show the reset password form (user clicked email link)
+Route::get('/recoverpassword/reset/{token}', 'RecoverPasswordController@showResetForm')
+    ->name('recoverpassword.resetform');
+
+// Handle submission of new password
+Route::post('/recoverpassword/reset', 'RecoverPasswordController@resetPassword')
+    ->name('recoverpassword.reset');
+
+
+
+// === Password Change Flow (Authenticated User) ===
+
+// Show password change form (authenticated user)
+Route::get('/profile/password/change', 'ProfileController@showChangePasswordForm')
+    ->name('profile.change_password');
+
+// Handle password change submission (authenticated user)
+Route::post('/password/change', 'ProfileController@changePassword')
+    ->name('auth.change_password.submit');
+
 
 
 Route::get('/dashboard', 'AuthController@dashboard')->name('dashboard');

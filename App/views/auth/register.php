@@ -1,4 +1,10 @@
-<form method="POST" action="<?= htmlspecialchars(route('auth.register'), ENT_QUOTES, 'UTF-8') ?>" enctype="multipart/form-data" class="max-w-md mx-auto mt-10 bg-white p-6 rounded shadow-md">
+  <!-- Flash Messages -->
+  <div class="space-y-2">
+    <?php isset($_SESSION['error']) ? errorMessage() : '' ?>
+    <?php isset($_SESSION['success']) ? errorMessage() : '' ?>
+  </div>
+  
+  <form method="POST" action="<?= htmlspecialchars(route('auth.register'), ENT_QUOTES, 'UTF-8') ?>" enctype="multipart/form-data" class="max-w-md mx-auto mt-10 bg-white p-6 rounded shadow-md">
     <?= csrf('field') ?>
     <h1 class="text-2xl font-bold mb-4">Register</h1>
     
