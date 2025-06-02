@@ -12,7 +12,10 @@ abstract class BaseModel
     public function __construct()
     {
         $this->db = Database::getInstance()->getConnection();
+        $this->db->exec("SET time_zone = '+03:30'");
+
         $this->ensureTableExist();
+
     }
 
     /**

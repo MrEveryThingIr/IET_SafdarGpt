@@ -2,27 +2,66 @@
 
 namespace App\Services;
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+use App\Core\Env;
+
 class EmailService
 {
-    private static $to ;
-    private static $subject ;
-    private static $message ;
-    private static $headers ;
-    private static $sendEmailAddress='school.mreverything@gmail.com';
+    protected string $host;
+    protected int $port;
+    protected string $username;
+    protected string $password;
+    protected string $encryption;
+    protected string $fromAddress;
+    protected string $fromName;
 
-    public static function send($to,$subject, $message) {
-        self::$to=$to;
-        self::$subject=$subject;
-        self::$message=$message;
+    public function __construct()
+    {
+        $this->host        = Env::get('MAIL_HOST', 'smtp.gmail.com');
+        $this->port        = (int) Env::get('MAIL_PORT', 587);
+        $this->username    = Env::get('MAIL_USERNAME');
+        $this->password    = Env::get('MAIL_PASSWORD');
+        $this->encryption  = Env::get('MAIL_ENCRYPTION', 'tls');
+        $this->fromAddress = Env::get('MAIL_FROM_ADDRESS', 'no-reply@example.com');
+        $this->fromName    = Env::get('MAIL_FROM_NAME', 'Your App');
+    }
 
-        self::$headers="MIME-VERSION: 1.0".'\r\n';
-        self::$headers.="Content-type:text/html;charset:UTF-8".'\r\n';
-        self::$headers .= "From: ".self::$sendEmailAddress.'\r\n';
+    /**
+     * Send an email using SMTP (PHPMailer)
+     *
+     * @param string $to
+     * @param string $subject
+     * @param string $htmlBody
+     * @return bool
+     */
+    public function send(string $to, string $subject, string $htmlBody): bool
+    {
+        $mail = new PHPMailer(true);
 
-        if(mail(self::$to,self::$subject,self::$message,self::$headers)){
+        try {
+            // SMTP server settings
+            $mail->isSMTP();
+            $mail->Host       = $this->host;
+            $mail->SMTPAuth   = true;
+            $mail->Username   = $this->username;
+            $mail->Password   = $this->password;
+            $mail->SMTPSecure = $this->encryption;
+            $mail->Port       = $this->port;
+
+            // Email content
+            $mail->setFrom($this->fromAddress, $this->fromName);
+            $mail->addAddress($to);
+            $mail->isHTML(true);
+            $mail->Subject = $subject;
+            $mail->Body    = $htmlBody;
+
+            $mail->send();
             return true;
-        }else{
-            return false;
-        }
+        } catch (Exception $e) {
+    error_log("PHPMailer Error: " . $mail->ErrorInfo);
+    return false;
+}
+
     }
 }
