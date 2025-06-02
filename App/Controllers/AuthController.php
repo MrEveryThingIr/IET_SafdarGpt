@@ -198,13 +198,7 @@ public function home()
         $this->render('auth/dashboard',[],[]);
     }
 
-    public function recoverPassEmailSend(){
-        $emailing=new EmailService();
-        $sent_email=$emailing->send('smehvari1389@gmail.com','SendFirstEmailToMyself','HEY MrEveryThing , You Are Much near!');
-        if($sent_email){
-            return 'OK';
-        }
-        
-    }
+
+
     
 }

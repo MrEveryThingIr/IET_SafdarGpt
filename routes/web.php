@@ -13,7 +13,10 @@ Route::post('/auth/login', 'AuthController@login')->name('auth.login.post');
 
 Route::post('/auth/logout', 'AuthController@logout')->name('auth.logout');
 
-Route::get('/send_email','AuthController@recoverPassEmailSend');
+Route::post('/auth/email/send_recoverpass_email','RecoverPasswordController@sendEmail')->name('auth.recoverpass.send_email');
+Route::get('/auth/email/send_recoverpass_email_form','RecoverPasswordController@sendEmailForm')->name('auth.email.send_recoverpass_email_form');
+
+
 Route::get('/dashboard', 'AuthController@dashboard')->name('dashboard');
 
 // IETAnnounces

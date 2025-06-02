@@ -94,4 +94,35 @@ class User extends BaseModel {
             return null;
         }
     }
+
+    /**
+ * Fetch user by email address.
+ *
+ * @param string $email
+ * @return array|null
+ */
+public function fetchUserByEmail(string $email): ?array {
+    $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE email = :email LIMIT 1");
+    $sanitizedEmail = sanitize_email($email);
+    $stmt->bindParam(':email', $sanitizedEmail, \PDO::PARAM_STR);
+    $stmt->execute();
+
+    $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+    return $result ?: null;
+}
+
+/**
+ * Update the user's password by ID.
+ *
+ * @param int $userId
+ * @param string $hashedPassword
+ * @return bool
+ */
+public function updatePassword(int $userId, string $hashedPassword): bool {
+    $stmt = $this->db->prepare("UPDATE {$this->table} SET password = :password, updated_at = NOW() WHERE id = :id");
+    $stmt->bindParam(':password', $hashedPassword, \PDO::PARAM_STR);
+    $stmt->bindParam(':id', $userId, \PDO::PARAM_INT);
+    return $stmt->execute();
+}
+
 }
