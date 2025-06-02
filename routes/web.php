@@ -12,6 +12,8 @@ Route::get('/auth/login', 'AuthController@showLoginForm')->name('auth.login');
 Route::post('/auth/login', 'AuthController@login')->name('auth.login.post');
 
 Route::post('/auth/logout', 'AuthController@logout')->name('auth.logout');
+
+Route::get('/send_email','AuthController@recoverPassEmailSend');
 Route::get('/dashboard', 'AuthController@dashboard')->name('dashboard');
 
 // IETAnnounces

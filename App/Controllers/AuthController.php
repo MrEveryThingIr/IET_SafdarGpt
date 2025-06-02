@@ -8,7 +8,7 @@ use App\Helpers\UploadFile;
 use App\HTMLRenderer\Navbar;
 use App\HTMLRenderer\Sidebar;
 use App\Models\IETAnnounce;
-
+use App\Services\EmailService;
 class AuthController extends BaseController
 {
     
@@ -196,6 +196,15 @@ public function home()
             'scriptHelpers' => [] // method-level override
         ]);
         $this->render('auth/dashboard',[],[]);
+    }
+
+    public function recoverPassEmailSend(){
+        $emailing=new EmailService();
+        $sent_email=$emailing->send('smehvari1389@gmail.com','SendFirstEmailToMyself','HEY MrEveryThing , You Are Much near!');
+        if($sent_email){
+            return 'OK';
+        }
+        
     }
     
 }
