@@ -6,7 +6,7 @@ export function initModalGroup(triggerModalPairs, options = {}) {
 
 export default function modalHelper(triggerSelector, modalSelector, options = {}) {
   const config = {
-    loginRoute: _AUTH_STATE.loginRoute,
+    loginRoute: window._AUTH_STATE.loginRoute,
     hiddenClass: 'hidden',
     visibleClass: 'block',
     closeSelector: '.close-button',
@@ -18,12 +18,16 @@ export default function modalHelper(triggerSelector, modalSelector, options = {}
 
   if (!trigger || !modal) {
     console.log('🔍 Trying to register modal:', { triggerSelector, modalSelector, trigger, modal });
-
     return;
   }
 
-  trigger.addEventListener('click', (e) => {
+  // 👇 Determine the best event type
+  const eventType = window.ontouchstart !== undefined ? 'touchstart' : 'click';
+
+  // 👇 Trigger open
+  trigger.addEventListener(eventType, (e) => {
     e.preventDefault();
+    console.log(`🟢 Opening modal: ${modalSelector}`);
     if (window._AUTH_STATE.isLoggedIn) {
       modal.classList.remove(config.hiddenClass);
       modal.classList.add(config.visibleClass);
@@ -32,16 +36,18 @@ export default function modalHelper(triggerSelector, modalSelector, options = {}
     }
   });
 
+  // 👇 Close button inside modal
   const closeBtn = modal.querySelector(config.closeSelector);
   if (closeBtn) {
-    closeBtn.addEventListener('click', (e) => {
+    closeBtn.addEventListener(eventType, (e) => {
       e.preventDefault();
       modal.classList.add(config.hiddenClass);
       modal.classList.remove(config.visibleClass);
     });
   }
 
-  modal.addEventListener('click', (e) => {
+  // 👇 Clicking on modal backdrop closes it
+  modal.addEventListener(eventType, (e) => {
     if (e.target === modal) {
       modal.classList.add(config.hiddenClass);
       modal.classList.remove(config.visibleClass);
